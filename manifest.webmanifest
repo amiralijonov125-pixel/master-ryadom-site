@@ -1,0 +1,24 @@
+{
+  "name": "Мастер рядом",
+  "short_name": "Мастер рядом",
+  "description": "Проверенные мастера рядом с домом: отзывы, цены, чат и запись на время.",
+  "lang": "ru",
+  "dir": "ltr",
+  "id": "./",
+  "start_url": "./?source=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0C2B27",
+  "theme_color": "#0C2B27",
+  "categories": ["lifestyle", "business", "utilities"],
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {"name": "Каталог мастеров", "url": "./#catalog", "icons": [{"src": "icon-192.png", "sizes": "192x192"}]},
+    {"name": "Биржа заказов", "url": "./#jobs", "icons": [{"src": "icon-192.png", "sizes": "192x192"}]}
+  ]
+}

@@ -26,9 +26,17 @@ window.MR_CONFIG = {
   //    Web configuration → Web Push certificates → Generate key pair. Это открытый ключ, он не секретный.
   vapidKey: '',
 
+  // 5. Карта мастеров. По умолчанию — бесплатные карты OpenStreetMap (подходят для старта, не для большого трафика).
+  //    Когда посетителей станет много, возьмите ключ у MapTiler, Stadia Maps или другого сервиса и впишите сюда его адрес плиток,
+  //    а его домен добавьте в img-src в firebase.json и index.html. Пример:
+  //    map: {tiles: 'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=ВАШ_КЛЮЧ', attribution: '© MapTiler © OpenStreetMap'},
+  //    Спутник по умолчанию — Esri World Imagery; свой адрес снимков: map.satellite и map.satelliteAttribution.
+  map: {center: [38.5598, 68.787], zoom: 12},
+
   // Код страны, если человек ввёл номер без «+»
   defaultCountryCode: '+992',
 
-  // Показывать мастеров-примеров. На настоящем сайте выключите (false), когда появятся настоящие мастера.
-  showDemo: true
+  // Мастера-примеры. В демо-режиме (без Firebase) они видны всегда, на настоящем сайте — только если поставить true.
+  // Вымышленных мастеров нельзя показывать настоящим клиентам.
+  showDemo: false
 };

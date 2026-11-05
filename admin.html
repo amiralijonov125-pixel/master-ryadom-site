@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://firebasestorage.googleapis.com http://127.0.0.1:9199; connect-src 'self' https://*.googleapis.com https://www.google.com http://127.0.0.1:9099 http://127.0.0.1:8080 http://127.0.0.1:9199; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Модерация · Мастер рядом</title>
+<style>
+/* Рабочий экран модератора: вкладки сверху, очередь карточек ниже. Цвета — как у основного сайта. */
+:root{--bg:#EAF0EF;--surface:#FFFFFF;--ink:#0E1E1C;--ink-2:#2B3C3A;--muted:#566765;--line:#D3DDDB;--accent:#0A6A5D;--accent-ink:#FFFFFF;--accent-soft:#D6EBE5;--hot:#B5432D;--hot-soft:#F8E0D9;--ok:#1A7743;--ok-soft:#D8EFE0;
+  --body:"Segoe UI",Roboto,system-ui,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#071011;--surface:#0D1819;--ink:#E8F0EF;--ink-2:#C3D1CF;--muted:#8EA29F;--line:#1C2E30;--accent:#3FC4AB;--accent-ink:#03201A;--accent-soft:#0F2F29;--hot:#F28A72;--hot-soft:#3A1D16;--ok:#62CF8B;--ok-soft:#0F2E1E;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body)}
+.wrap{max-width:1100px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 60px max(16px,env(safe-area-inset-left,0px))}
+h1{margin:0 0 4px;font-size:24px}
+.sub{margin:0 0 18px;color:var(--muted)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.tabs button{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:7px 14px;font:600 14px var(--body);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tabs em{font-style:normal;margin-left:6px;font-family:var(--mono);font-size:12px}
+.list{display:grid;gap:10px}
+.item{display:grid;gap:8px;padding:14px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);min-width:0}
+.item header{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.item b{font-size:16px}
+.meta{color:var(--muted);font-size:13px;font-family:var(--mono);overflow-wrap:anywhere}
+.item p{margin:0;color:var(--ink-2);overflow-wrap:anywhere}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:0;border-radius:10px;padding:8px 14px;font:600 14px var(--body);cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--hot-soft);color:var(--hot)}
+.btn:disabled{opacity:.5;cursor:default}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.grid .item{padding:8px}
+.grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--hot-soft);color:var(--hot);font-size:12px;font-weight:600}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.login{max-width:420px;display:grid;gap:12px;padding:20px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.login input{width:100%;height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:16px var(--body)}
+.err{color:var(--hot);margin:0;font-weight:600}
+.empty{padding:30px;text-align:center;color:var(--muted);border:1.5px dashed var(--line);border-radius:14px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Модерация</h1>
+  <p class="sub" id="who">Вход для модераторов «Мастер рядом»</p>
+  <div id="app"></div>
+</div>
+<script src="vendor/firebase-app-compat.js"></script>
+<script src="vendor/firebase-auth-compat.js"></script>
+<script src="vendor/firebase-firestore-compat.js"></script>
+<script src="vendor/firebase-storage-compat.js"></script>
+<script src="config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

@@ -42,7 +42,8 @@ const fmtDay = ms => { const d = new Date(ms); return WD[d.getDay()] + ', ' + d.
 const ago = ms => { const s = (Date.now() - (ms || 0)) / 1000; if (s < 60) return 'только что'; const m = s / 60; if (m < 60) return Math.floor(m) + ' мин назад'; const h = m / 60; if (h < 24) return Math.floor(h) + ' ч назад'; const d = Math.floor(h / 24); if (d === 1) return 'вчера'; if (d < 30) return d + ' ' + plural(d, ['день', 'дня', 'дней']) + ' назад'; return fmtDate(ms); };
 const hash = s => { let h = 2166136261; s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
 const initials = n => String(n || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '?';
-const validImg = s => (typeof s === 'string' && s.length < 400000 && /^data:image\/(png|jpe?g|webp|gif);base64,[a-z0-9+/=]+$/i.test(s)) ? s : null;
+const STORE_RE = /^(https:\/\/firebasestorage\.googleapis\.com|http:\/\/127\.0\.0\.1:9199)\/v0\/b\/[\w.-]+\/o\/[\w%.-]+\?alt=media(&token=[\w-]+)?$/;
+const validImg = s => (typeof s === 'string' && s.length < 400000 && (/^data:image\/(png|jpe?g|webp|gif);base64,[a-z0-9+/=]+$/i.test(s) || STORE_RE.test(s))) ? s : null;
 const norm = s => String(s || '').toLowerCase().replace(/ё/g, 'е');
 const REV = ['отзыв', 'отзыва', 'отзывов'];
 const RESP = ['отклик', 'отклика', 'откликов'];
@@ -1086,7 +1087,83 @@ Android (Chrome)|Android (Chrome)|Android (Chrome)
 Например: укладка плитки в ванной, 6 м², 2 дня|For example: bathroom tiling, 6 m², 2 days|Масалан: гузоштани кафел дар ҳаммом, 6 м², 2 рӯз
 Опубликовать|Publish|Нашр кардан
 Добавьте фото работы.|Add a photo of the work.|Акси корро илова кунед.
-Работа опубликована|Work published|Кор нашр шуд`;
+Работа опубликована|Work published|Кор нашр шуд
+Номер откроется, когда вы напишете мастеру. Так мы защищаем мастеров от спама|The number unlocks once you message the pro. This protects pros from spam|Рақам пас аз он кушода мешавад, ки шумо ба усто нависед. Ҳамин тавр мо устоҳоро аз спам ҳифз мекунем
+Загружаем отзывы…|Loading reviews…|Тақризҳо бор шуда истодаанд…
+На сегодня лимит исчерпан. Это защита от спама, попробуйте завтра.|You've reached today's limit. This protects against spam — try again tomorrow.|Маҳдудияти имрӯза тамом шуд. Ин ҳимоя аз спам аст, фардо кӯшиш кунед.
+Заблокировать: собеседник больше не сможет мне писать|Block: this person won't be able to message me|Манъ кардан: ҳамсуҳбат дигар ба ман навишта наметавонад
+Текст в уведомлении|Message text in notifications|Матн дар огоҳинома
+Показывать текст сообщения на экране блокировки. Если выключено, придёт только «Новое сообщение»|Show the message text on the lock screen. If off, you'll only see "New message"|Матни паёмро дар экрани қулф нишон додан. Агар хомӯш бошад, танҳо «Паёми нав» меояд
+Заблокированные|Blocked|Манъшудагон
+Разблокировать всех|Unblock everyone|Ҳамаро аз манъ баровардан
+Все разблокированы|Everyone unblocked|Ҳама аз манъ бароварда шуданд
+Удалить аккаунт|Delete account|Нест кардани аккаунт
+Удалятся профиль, анкета мастера, фото, заказы и номер телефона. Отменить нельзя|Your profile, pro listing, photos, jobs and phone number will be deleted. This can't be undone|Профил, анкетаи усто, аксҳо, фармоишҳо ва рақами телефон нест мешаванд. Бекор кардан мумкин нест
+Удалить|Delete|Нест кардан
+Да, удалить навсегда|Yes, delete forever|Ҳа, абадан нест кунед
+Удаляем аккаунт…|Deleting account…|Аккаунт нест шуда истодааст…
+Аккаунт и данные удалены|Account and data deleted|Аккаунт ва маълумот нест карда шуданд
+Для удаления подтвердите номер ещё раз|Confirm your number again to delete|Барои нест кардан рақамро боз тасдиқ кунед
+Подтвердите номер кодом из СМС, чтобы удалить аккаунт.|Confirm your number with the SMS code to delete your account.|Барои нест кардани аккаунт рақамро бо рамзи SMS тасдиқ кунед.
+Список|List|Рӯйхат
+Карта|Map|Харита
+Где я|Near me|Ман дар куҷо
+Ближе ко мне|Nearest to me|Наздиктар ба ман
+Где вы работаете|Where you work|Шумо дар куҷо кор мекунед
+Моё местоположение|My location|Ҷойгиршавии ман
+Убрать точку|Remove pin|Нуқтаро тоза кардан
+Нажмите на карту, чтобы поставить точку. Клиенты рядом найдут вас быстрее.|Tap the map to drop a pin. Nearby clients will find you faster.|Барои гузоштани нуқта харитаро пахш кунед. Мизоҷони наздик шуморо зудтар меёбанд.
+Показывать клиентам примерно, в радиусе около 1 км, без точного адреса|Show clients an approximate spot, within about 1 km, without your exact address|Ба мизоҷон тахминан, дар радиуси тақрибан 1 км, бе суроғаи дақиқ нишон диҳед
+Открыть профиль|Open profile|Кушодани профил
+Показываем мастеров рядом с вами|Showing pros near you|Устоҳои наздики шуморо нишон медиҳем
+Не удалось определить местоположение. Откройте карту и нажмите на место, где вы находитесь|Couldn't get your location. Open the map and tap where you are|Ҷойгиршавиро муайян карда нашуд. Харитаро кушоед ва ҷойеро, ки ҳастед, пахш кунед
+Точка отмечена. Показываем мастеров рядом|Location set. Showing nearby pros|Нуқта қайд шуд. Устоҳои наздикро нишон медиҳем
+Подложка карты здесь не загружается. Мастера показаны точками; на вашем сайте будет обычная карта города.|The map background can't load here. Pros are shown as pins; your own site will show a normal city map.|Заминаи харита дар ин ҷо бор намешавад. Устоҳо бо нуқтаҳо нишон дода шудаанд; дар сайти шумо харитаи оддии шаҳр мешавад.
+Эти мастера ещё не отметили место на карте. Смотрите их в списке|These pros haven't marked a location yet. See them in the list|Ин устоҳо ҳоло ҷойро дар харита қайд накардаанд. Онҳоро дар рӯйхат бинед
+Вы здесь|You are here|Шумо дар ин ҷо
+место примерно|approximate location|ҷой тахминан
+от вас|from you|аз шумо
+Неон|Neon|Неон
+Объёмный фон из плиток красивый, но нагружает телефон. По умолчанию выключен|The 3D tile background looks great but loads your phone. Off by default|Заминаи ҳаҷмии кафелӣ зебо аст, вале телефонро бор мекунад. Бо пешфарз хомӯш аст
+Где нужна работа|Where the work is|Кор дар куҷо лозим аст
+Мастера рядом увидят заказ на карте. Точный адрес не показываем, только примерно, в радиусе около 1 км.|Nearby pros will see the job on the map. We never show the exact address, only an approximate spot within about 1 km.|Устоҳои наздик фармоишро дар харита мебинанд. Суроғаи дақиқ нишон дода намешавад, танҳо тахминан, дар радиуси тақрибан 1 км.
+Это ваш заказ|This is your job|Ин фармоиши шумост
+Вы уже откликнулись|You've already replied|Шумо аллакай ҷавоб додаед
+Цена договорная|Price negotiable|Нарх бо созиш
+Открытых заказов пока нет|No open jobs yet|Ҳоло фармоиши кушода нест
+У этих заказов нет отметки на карте. Смотрите их в списке|These jobs have no map location. See them in the list|Ин фармоишҳо дар харита қайд надоранд. Онҳоро дар рӯйхат бинед
+Точка отмечена. Сначала показываем заказы рядом|Location set. Showing nearby jobs first|Нуқта қайд шуд. Аввал фармоишҳои наздикро нишон медиҳем
+Подложка карты здесь не загружается. Заказы показаны точками; на вашем сайте будет обычная карта города.|The map background can't load here. Jobs are shown as pins; your own site will show a normal city map.|Заминаи харита дар ин ҷо бор намешавад. Фармоишҳо бо нуқтаҳо нишон дода шудаанд; дар сайти шумо харитаи оддии шаҳр мешавад.
+Нажмите на карту, где нужна работа|Tap the map where the work is|Ҷоеро, ки кор лозим аст, дар харита пахш кунед
+Не удалось определить местоположение. Нажмите на карту, где нужна работа|Couldn't get your location. Tap the map where the work is|Ҷойгиршавиро муайян карда нашуд. Ҷоеро, ки кор лозим аст, дар харита пахш кунед
+Схема|Map|Нақша
+Спутник|Satellite|Моҳвора
+Маршрут к району|Route to the area|Масир то минтақа
+Маршрут в Google Картах|Route in Google Maps|Масир дар Google Maps
+Где работает|Where they work|Дар куҷо кор мекунад
+Место показано примерно, в радиусе около 1 км. Точный адрес мастер пришлёт в чате.|The location is approximate, within about 1 km. The pro will send the exact address in chat.|Ҷой тахминан нишон дода шудааст, дар радиуси тақрибан 1 км. Суроғаи дақиқро усто дар чат мефиристад.
+Точное место работы мастера.|The pro's exact work location.|Ҷои дақиқи кори усто.
+Точный адрес клиент пришлёт в чате после договорённости|The client will send the exact address in chat once you agree|Суроғаи дақиқро мизоҷ пас аз созиш дар чат мефиристад
+Отправить моё место|Send my location|Ҷои маро фиристодан
+Проложить маршрут|Get directions|Масир сохтан
+Открыть в Google Картах|Open in Google Maps|Дар Google Maps кушодан
+Определяем место…|Getting your location…|Ҷой муайян карда мешавад…
+Не удалось определить местоположение. Разрешите доступ к геолокации в настройках телефона|Couldn't get your location. Allow location access in your phone settings|Ҷойгиршавиро муайян карда нашуд. Дар танзимоти телефон ба геолокатсия иҷозат диҳед
+Телефон не дал местоположение|The phone didn't share its location|Телефон ҷойгиршавиро надод
+Неон, светлая, чёрная или лаванда|Neon, light, black or lavender|Неон, равшан, сиёҳ ё лаванда
+Лаванда|Lavender|Лаванда
+Чёрная|Black|Сиёҳ
+Светлая|Light|Равшан
+Виды работ|Types of work|Навъҳои кор
+найдено|found|ёфт шуд
+мастеров не найдено|no pros found|усто ёфт нашуд
+Лаванда, неон, светлая или чёрная|Lavender, neon, light or black|Лаванда, неон, равшан ё сиёҳ
+Другое — своя специальность|Other — my own trade|Дигар — ихтисоси худ
+Ваша специальность *|Your trade *|Ихтисоси шумо *
+Например: ремонт дронов, установка солнечных панелей|For example: drone repair, solar panel installation|Масалан: таъмири дронҳо, насби панелҳои офтобӣ
+Напишите так, как вашу работу называют клиенты. Специальность появится в поиске сразу после публикации.|Write it the way clients call your work. It will appear in search right after you publish.|Нависед, ки мизоҷон кори шуморо чӣ ном мебаранд. Ихтисос пас аз нашр дарҳол дар ҷустуҷӯ пайдо мешавад.
+Напишите свою специальность, например «Ремонт дронов».|Write your trade, for example "Drone repair".|Ихтисоси худро нависед, масалан «Таъмири дронҳо».
+Новая специальность|New trade|Ихтисоси нав`;
 const LANGS = ['ru', 'en', 'tg'];
 const LANG = {cur: 'ru'};
 const I18 = {en: new Map(), tg: new Map()}, I18L = {en: new Map(), tg: new Map()}, I18C = {en: new Map(), tg: new Map()};
@@ -1190,6 +1267,7 @@ const aiLangHint = () => LANG.cur === 'en' ? 'Отвечай на английс
 
 /* ---------- иконки ---------- */
 const IC = {
+  locate: '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
   bell: '<path d="M6 16v-5a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
   flag: '<path d="M5 21V4"/><path d="M5 4h12l-2.5 4.5L17 13H5"/>',
   search: '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>',
@@ -1378,6 +1456,19 @@ function intent(q) {
   }
   return {cats, brand};
 }
+/* Специальности, которые мастера вписали сами («Другое»), — появляются в поиске и списках автоматически */
+function customProfs() {
+  const cnt = new Map();
+  masters().forEach(m => { if (m.prof && !CAT[m.prof]) cnt.set(m.prof, (cnt.get(m.prof) || 0) + 1); });
+  return Array.from(cnt.entries()).sort((a, b) => b[1] - a[1]).map(([k, n]) => ({k, n, ic: 'tools'}));
+}
+/* Своя специальность: аккуратный вид; если совпала со списком — берём название из списка */
+function normProf(t) {
+  t = String(t || '').replace(/\s+/g, ' ').trim().slice(0, 40);
+  if (!t) return '';
+  const hit = CATS.find(c => norm(c.k) === norm(t)) || customProfs().find(c => norm(c.k) === norm(t));
+  return hit ? hit.k : t.charAt(0).toUpperCase() + t.slice(1);
+}
 const brandFits = (m, b) => !b || !(m.brands && m.brands.length) || m.brands.indexOf(b.n) >= 0;
 /* Подсказки при вводе: виды работ, марки машин и услуги. */
 function suggest(q) {
@@ -1398,11 +1489,14 @@ function suggest(q) {
     if (autoCtx && !it.brand) s += 3 - i * 0.05;
     if (s) out.push({s, t: 'Мастер ' + b.n, sub: BRAND_T[b.t], ic: b.t === 'ev' ? 'plug' : 'car', brand: b.n});
   });
+  customProfs().forEach(c => { if (pre(c.k)) out.push({s: 8, t: c.k, sub: 'Новая специальность · ' + pl(c.n, ['мастер', 'мастера', 'мастеров']), ic: c.ic, cat: c.k}); });
   if (last.length >= 3) CATS.forEach(c => c.svc.forEach(v => { if (pre(v)) out.push({s: 3 + (it.cats.indexOf(c.k) >= 0 ? 4 : 0), t: v, sub: c.k, ic: c.ic, svc: v, cat: c.k}); }));
   const seen = new Set();
   return out.sort((a, b) => b.s - a.s).filter(x => !seen.has(x.t) && seen.add(x.t)).slice(0, 8);
 }
-function attachAC(inp, wrap, onPick) {
+/* Подсказки поиска. opts.popular — что показать, пока поле пустое («Часто ищут») */
+function attachAC(inp, wrap, onPick, opts) {
+  opts = opts || {};
   const box = document.createElement('div'), id = inp.id + '-ac';
   box.className = 'ac'; box.id = id; box.setAttribute('role', 'listbox'); box.setAttribute('aria-label', 'Подсказки'); box.hidden = true;
   wrap.appendChild(box);
@@ -1410,18 +1504,29 @@ function attachAC(inp, wrap, onPick) {
   let items = [], act = -1;
   const close = () => { box.hidden = true; act = -1; inp.setAttribute('aria-expanded', 'false'); inp.removeAttribute('aria-activedescendant'); };
   const mark = () => {
-    $$('.ac-it', box).forEach((b, i) => b.setAttribute('aria-selected', String(i === act)));
+    $$('.ac-it, .ac-cat', box).forEach((b, i) => b.setAttribute('aria-selected', String(i === act)));
     if (act >= 0) { inp.setAttribute('aria-activedescendant', id + '-' + act); const b = $('#' + id + '-' + act); if (b) b.scrollIntoView({block: 'nearest'}); }
   };
   const render = () => {
-    items = inp.value.trim() ? suggest(inp.value) : []; act = -1;
+    act = -1;
+    if (!inp.value.trim() && opts.popular) {
+      const pops = opts.popular.map(t => ({pop: t})), cats = (typeof opts.cats === 'function' ? opts.cats() : opts.cats || []).map(c => ({cat: c.k, ic: c.ic}));
+      items = pops.concat(cats);
+      const it = (x, i) => '<button type="button" class="' + (x.pop ? 'ac-it' : 'ac-cat') + '" role="option" tabindex="-1" id="' + id + '-' + i + '" data-i="' + i + '" aria-selected="false">' + icon(x.pop ? 'search' : x.ic) + (x.pop ? '<span><b>' + esc(x.pop) + '</b></span>' : esc(x.cat)) + '</button>';
+      box.innerHTML = '<p class="ac-h">Часто ищут</p>' + pops.map(it).join('') +
+        (cats.length ? '<p class="ac-h">Виды работ</p><div class="ac-cats">' + cats.map((x, i) => it(x, pops.length + i)).join('') + '</div>' : '');
+      box.hidden = false; inp.setAttribute('aria-expanded', 'true');
+      return;
+    }
+    items = inp.value.trim() ? suggest(inp.value) : [];
     if (!items.length) { close(); return; }
     box.innerHTML = '<p class="ac-h">Возможно, вы ищете</p>' + items.map((x, i) => '<button type="button" class="ac-it" role="option" tabindex="-1" id="' + id + '-' + i + '" data-i="' + i + '" aria-selected="false">' + icon(x.ic) + '<span><b>' + esc(x.t) + '</b><small>' + esc(x.sub) + '</small></span></button>').join('');
     box.hidden = false; inp.setAttribute('aria-expanded', 'true');
   };
   const pick = x => { close(); onPick(x); };
   inp.addEventListener('input', render);
-  inp.addEventListener('focus', () => { if (inp.value.trim()) render(); });
+  inp.addEventListener('focus', () => { if (inp.value.trim() || opts.popular) render(); });
+  if (opts.popular) inp.addEventListener('click', () => { if (box.hidden) render(); });
   inp.addEventListener('keydown', e => {
     if (box.hidden) return;
     if (e.key === 'ArrowDown') { e.preventDefault(); act = (act + 1) % items.length; mark(); }
@@ -1627,6 +1732,7 @@ function loadLocal() {
   if (!s || typeof s !== 'object') s = {};
   const out = Object.assign({masters: [], reviews: [], jobs: [], requests: [], favs: [], msgs: [], respExtra: {}, responded: {}, chatSeen: {}, bkOverride: {}, blocked: {}, clientId: null, showDemo: true, draft: null, me: null, migrated: false}, s);
   if (!out.blocked || typeof out.blocked !== 'object') out.blocked = {};
+  if (!out.blockedUids || typeof out.blockedUids !== 'object') out.blockedUids = {};
   if (!out.bkOverride || typeof out.bkOverride !== 'object') out.bkOverride = {};
   ['masters', 'reviews', 'jobs', 'requests', 'favs', 'msgs', 'works'].forEach(k => { if (!Array.isArray(out[k])) out[k] = []; });
   if (!out.chatSeen || typeof out.chatSeen !== 'object') out.chatSeen = {};
@@ -1651,7 +1757,8 @@ function loadLocal() {
   return out;
 }
 const local = loadLocal();
-const USE_3D = local.bg3d === 'on' || (local.bg3d !== 'off' && !LITE_DEVICE && !REDUCE);
+// 3D-фон нагружает телефон, поэтому включается только по желанию в настройках
+const USE_3D = local.bg3d === 'on' && !REDUCE;
 document.documentElement.classList.toggle('lite', !USE_3D);
 let warnedQuota = false;
 function saveLocal() {
@@ -1666,10 +1773,42 @@ const shared = {db: null, on: false, canWrite: false, uid: null, masters: [], re
    Включается, когда в config.js заполнен window.MR_CONFIG.firebase. Без него сайт работает в демо-режиме.
    Что можно читать и писать, решает сервер по правилам firestore.rules: код страницы можно подменить, правила — нет. */
 const CFG = window.MR_CONFIG || {};
-const FB = {on: false, auth: null, user: null, contacts: {}, loading: new Set(), unsub: [], rc: null, confirm: null};
+const FB = {on: false, auth: null, user: null, storage: null, contacts: {}, loading: new Set(), unsub: [], rc: null, confirm: null, revBy: {}, worksBy: {}, accessTried: new Set()};
 const fsTime = v => v && typeof v.toMillis === 'function' ? v.toMillis() : v;
 const TS = () => firebase.firestore.FieldValue.serverTimestamp();
-const fbImg = v => { const x = validImg(v); return x && x.length < 290000 && /^data:image\/(jpeg|png|webp);/.test(x) ? x : null; };
+/* Фото хранятся в Firebase Storage: в базе только ссылка, поэтому каждый скачивает лишь те фото, что видит */
+async function uploadImg(dataUrl) {
+  const m = /^data:(image\/(jpeg|png|webp));base64,(.+)$/.exec(dataUrl || '');
+  if (!m || !FB.user) return null;
+  const bin = atob(m[3]), arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  const ref = FB.storage.ref('u/' + FB.user.uid + '/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + (m[2] === 'jpeg' ? '.jpg' : '.' + m[2]));
+  await ref.put(new Blob([arr], {type: m[1]}), {contentType: m[1], cacheControl: 'public, max-age=31536000'});
+  return ref.getDownloadURL();
+}
+async function toStoreUrl(v) {
+  const x = validImg(v);
+  if (!x) return null;
+  return STORE_RE.test(x) ? x : uploadImg(x);
+}
+/* Дневные лимиты (защита от спама): счётчик увеличивается вместе с действием, сервер проверяет его сам */
+const LIMITS = {msg: 300, job: 10, resp: 40, report: 20, work: 20};
+function limitRef(kind) {
+  const d = new Date();
+  return shared.db.collection('limits').doc(shared.uid + '_' + kind + '_' + (d.getUTCFullYear() * 10000 + (d.getUTCMonth() + 1) * 100 + d.getUTCDate()));
+}
+async function countedWrite(kind, ref, data) {
+  const b = shared.db.batch();
+  b.set(ref, data);
+  b.set(limitRef(kind), {n: firebase.firestore.FieldValue.increment(1)}, {merge: true});
+  try { await b.commit(); }
+  catch (e) {
+    if (e && e.code === 'permission-denied') {
+      try { const sn = await limitRef(kind).get(); if (sn.exists && sn.data().n >= LIMITS[kind]) e.limit = true; } catch (x) { /* не важно */ }
+    }
+    throw e;
+  }
+}
 function fromDoc(d) {
   const x = d.data({serverTimestamps: 'estimate'}) || {};
   ['at', 'createdAt', 'updatedAt', 'decidedAt'].forEach(k => { if (k in x) x[k] = fsTime(x[k]); });
@@ -1681,6 +1820,7 @@ function fbListen(name, q, map) {
 }
 function fbErrText(e) {
   const c = e && e.code;
+  if (e && e.limit) return 'На сегодня лимит исчерпан. Это защита от спама, попробуйте завтра.';
   if (c === 'permission-denied') return 'Сервер не принял изменения. Проверьте данные или войдите заново.';
   if (c === 'unavailable' || c === 'deadline-exceeded') return 'Нет связи с сервером. Проверьте интернет и попробуйте снова.';
   if (c === 'resource-exhausted') return 'Слишком много запросов. Подождите минуту.';
@@ -1689,7 +1829,7 @@ function fbErrText(e) {
 }
 async function initFirebase() {
   if (!window.firebase) {
-    try { await Promise.all(['app', 'app-check', 'auth', 'firestore'].map(f => loadScript('firebase-' + f + '-compat.js'))); }
+    try { await Promise.all(['app', 'app-check', 'auth', 'firestore', 'storage'].map(f => loadScript('vendor/firebase-' + f + '-compat.js'))); }
     catch (e) { console.warn(e.message); }
   }
   if (!window.firebase || typeof firebase.initializeApp !== 'function') { console.warn('Firebase SDK не загружен (папка vendor)'); renderStatus(); return; }
@@ -1699,16 +1839,18 @@ async function initFirebase() {
     FB.auth = firebase.auth();
     FB.auth.useDeviceLanguage();
     shared.db = firebase.firestore();
+    FB.storage = firebase.storage();
     // Для проверки на своём компьютере: firebase emulators:start (работает только на localhost)
-    if (CFG.useEmulators && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { FB.auth.useEmulator('http://127.0.0.1:9099'); FB.auth.settings.appVerificationDisabledForTesting = true; shared.db.useEmulator('127.0.0.1', 8080); }
+    if (CFG.useEmulators && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { FB.auth.useEmulator('http://127.0.0.1:9099'); FB.auth.settings.appVerificationDisabledForTesting = true; shared.db.useEmulator('127.0.0.1', 8080); FB.storage.useEmulator('127.0.0.1', 9199); }
+    // Кэш в телефоне: повторный запуск открывается мгновенно и читает с сервера только изменения
+    shared.db.enablePersistence({synchronizeTabs: true}).catch(() => null);
   } catch (e) { console.warn('Firebase:', e && e.message); renderStatus(); return; }
   FB.on = true; shared.on = true; shared.canWrite = false;
-  if (CFG.showDemo === false) local.showDemo = false;
+  // На настоящем сайте вымышленных мастеров нет, если в config.js явно не включено showDemo: true
+  if (CFG.showDemo !== true) local.showDemo = false;
   const db = shared.db;
   fbListen('masters', db.collection('masters').limit(1000));
-  fbListen('reviews', db.collection('reviews').limit(3000));
   fbListen('jobs', db.collection('jobs').where('status', '==', 'open').limit(300));
-  fbListen('works', db.collection('works').limit(1000));
   FB.auth.onAuthStateChanged(onFbUser);
   renderStatus();
 }
@@ -1741,12 +1883,22 @@ async function onFbUser(user) {
 }
 /* Нажали на уведомление: ./?chat=<id диалога> */
 let OPEN_CHAT = (() => { try { const p = new URLSearchParams(location.search), c = p.get('chat'); if (c) { p.delete('chat'); history.replaceState(null, '', location.pathname + (p.toString() ? '?' + p : '') + location.hash); } return c && /^[\w-]{1,200}$/.test(c) ? c : null; } catch (e) { return null; } })();
+function fbLoadList(kind, id) {
+  const store = kind === 'reviews' ? FB.revBy : FB.worksBy, key = kind + ':' + id;
+  if (!FB.on || FB.loading.has(key)) return;
+  FB.loading.add(key);
+  shared.db.collection(kind).where('masterId', '==', id).orderBy('createdAt', 'desc').limit(kind === 'reviews' ? 100 : 60).get()
+    .then(sn => { store[id] = sn.docs.map(fromDoc); }, e => { console.warn('Загрузка', kind, e && e.code); store[id] = store[id] || []; })
+    .then(() => { FB.loading.delete(key); invalidate(); });
+}
 function fbFetchContact(coll, id, key, attempt) {
   if (!FB.user || FB.loading.has(key) || FB.contacts[key] !== undefined) return;
   FB.loading.add(key);
   const uidNow = FB.user.uid;
   shared.db.collection(coll).doc(id).get()
     .then(snap => { if (FB.user && FB.user.uid === uidNow) FB.contacts[key] = snap.exists ? String(snap.data().phone || '') : ''; }, e => {
+      // Номер мастера закрыт, пока клиент ему не написал (null — «закрыт»)
+      if (e && e.code === 'permission-denied' && coll === 'masterContacts') { FB.contacts[key] = null; return; }
       // Отклик мог ещё не дойти до сервера: пробуем ещё пару раз
       if (e && e.code === 'permission-denied' && (attempt || 0) < 3) { setTimeout(() => fbFetchContact(coll, id, key, (attempt || 0) + 1), 1200 * ((attempt || 0) + 1)); return; }
       FB.contacts[key] = ''; console.warn('Контакт:', e && e.code);
@@ -1812,19 +1964,38 @@ async function sharedWrite(fn) {
 
 /* ---------- производные данные ---------- */
 let _masters = null;
+/* Сколько ЧУЖИХ специальностей мастер упомянул в услугах и «О себе». 3 и больше — похоже на набивку слов ради поиска */
+let CAT_STEMS = null;
+function otherCats(m, own) {
+  if (!CAT_STEMS) CAT_STEMS = CATS.map(c => ({k: c.k, w: norm(c.k).split(' ').filter(w => w.length >= 6 && ['мастер', 'ремонт', 'бытовой', 'техники', 'телефонов', 'двери'].indexOf(w) < 0).map(stem)}));
+  return CAT_STEMS.filter(c => c.k !== m.prof && c.w.length && c.w.some(w => own.indexOf(w) >= 0)).length;
+}
 function enrich(m) {
-  const ext = shared.reviews.concat(local.reviews).filter(r => r && r.masterId === m.id);
-  const own = Array.isArray(m.reviews) ? m.reviews : [];
-  const reviews = ext.concat(own).filter(r => r && r.r >= 1 && r.r <= 5).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-  const n = reviews.length;
-  const avg = n ? reviews.reduce((s, r) => s + Number(r.r), 0) / n : 0;
-  const tc = {};
-  reviews.forEach(r => (Array.isArray(r.tags) ? r.tags : []).forEach(t => { tc[t] = (tc[t] || 0) + 1; }));
-  const tags = Object.keys(tc).map(t => ({t, c: tc[t]})).sort((a, b) => b.c - a.c);
+  const fbShared = FB.on && m.source === 'shared';
+  let reviews, n, avg, tags, rdist = null;
+  if (fbShared) {
+    // Отзывы загружаются при открытии профиля, а оценку и отметки сервер хранит в самом профиле (rn, rs, rd, rt)
+    reviews = (FB.revBy[m.id] || []).slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    n = Math.max(0, Number(m.rn) || 0);
+    avg = n ? (Number(m.rs) || 0) / n : 0;
+    const rt = m.rt && typeof m.rt === 'object' ? m.rt : {}, rd = m.rd && typeof m.rd === 'object' ? m.rd : {};
+    tags = Object.keys(rt).map(t => ({t, c: Number(rt[t]) || 0})).filter(x => x.c > 0).sort((a, b) => b.c - a.c);
+    rdist = {}; [1, 2, 3, 4, 5].forEach(k => { rdist[k] = Number(rd[k]) || 0; });
+  } else {
+    const ext = shared.reviews.concat(local.reviews).filter(r => r && r.masterId === m.id);
+    const own = Array.isArray(m.reviews) ? m.reviews : [];
+    reviews = ext.concat(own).filter(r => r && r.r >= 1 && r.r <= 5).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    n = reviews.length;
+    avg = n ? reviews.reduce((s, r) => s + Number(r.r), 0) / n : 0;
+    const tc = {};
+    reviews.forEach(r => (Array.isArray(r.tags) ? r.tags : []).forEach(t => { tc[t] = (tc[t] || 0) + 1; }));
+    tags = Object.keys(tc).map(t => ({t, c: tc[t]})).sort((a, b) => b.c - a.c);
+  }
   const services = Array.isArray(m.services) ? m.services.filter(s => s && s.n) : [];
   const brands = Array.isArray(m.brands) ? m.brands.filter(b => BRAND[b]) : [];
   const hay = norm([m.name, m.prof, m.district, m.about].concat(services.map(s => s.n), brands).join(' '));
-  return Object.assign({}, m, {services, brands, reviews, n, avg, tags, score: (avg * n + 4.3 * 2) / (n + 2), _hay: hay, price: Number(m.price) || 0, exp: Number(m.exp) || 0});
+  const ownText = norm([m.about].concat(services.map(s => s.n)).join(' '));
+  return Object.assign({}, m, {services, brands, reviews, n, avg, tags, rdist, score: (avg * n + 4.3 * 2) / (n + 2), _hay: hay, _other: otherCats(m, ownText), price: Number(m.price) || 0, exp: Number(m.exp) || 0});
 }
 function masters() {
   if (_masters) return _masters;
@@ -1957,7 +2128,7 @@ const Scene = (() => {
   const pend = {};
   api.setMode = n => { pend.mode = n; };
   api.setScroll = (y, h) => { pend.scroll = [y, h]; };
-  loadScript('three.min.js').then(() => {
+  loadScript('vendor/three.min.js').then(() => {
     build();
     if (pend.mode) api.setMode(pend.mode);
     if (pend.scroll) api.setScroll(pend.scroll[0], pend.scroll[1]);
@@ -2265,7 +2436,7 @@ function cardHTML(m, i, anim) {
   const fav = local.favs.indexOf(m.id) >= 0, c = cmp.has(m.id);
   return '<article class="card' + (anim ? ' enter' : '') + '" data-id="' + esc(m.id) + '" style="--i:' + (i || 0) + '">' +
     '<span class="card-glare" aria-hidden="true"></span>' +
-    '<div class="card-top">' + avaHTML(m) + '<div class="who"><h3>' + esc(m.name) + '</h3><p>' + (m.demo ? '<span class="ex">пример</span>' : '') + esc(m.prof) + ' · ' + esc(m.district || 'район не указан') + '</p></div>' +
+    '<div class="card-top">' + avaHTML(m) + '<div class="who"><h3>' + esc(m.name) + '</h3><p>' + (m.demo ? '<span class="ex">пример</span>' : '') + esc(m.prof) + ' · ' + (kmOf(m) != null ? '<span class="km">' + fmtKm(kmOf(m)) + '</span>' : esc(m.district || 'район не указан')) + '</p></div>' +
     '<button class="fav" type="button" data-act="fav" aria-pressed="' + fav + '" aria-label="' + (fav ? 'Убрать из избранного' : 'Добавить в избранное') + '">' + icon('heart') + '</button></div>' +
     '<div class="rating">' + starsHTML(m.avg) + '<b>' + fmtR(m.avg) + '</b><span>' + (m.n ? pl(m.n, REV) : 'пока без отзывов') + '</span></div>' +
     '<div class="badges">' + badgesHTML(m) + '</div>' +
@@ -2349,12 +2520,13 @@ function openFavs() { if (isRegistered()) openCabinet('favs'); else openAuth({re
 /* ---------- профиль мастера ---------- */
 const PM = {id: null, sort: 'new', all: false, day: null, slot: null};
 function sumHTML(m) {
-  const dist = [5, 4, 3, 2, 1].map(s => { const c = m.reviews.filter(r => Number(r.r) === s).length; return {s, c, p: m.n ? c / m.n * 100 : 0}; });
+  const dist = [5, 4, 3, 2, 1].map(s => { const c = m.rdist ? m.rdist[s] : m.reviews.filter(r => Number(r.r) === s).length; return {s, c, p: m.n ? c / m.n * 100 : 0}; });
   return '<div class="score"><div class="score-l"><div class="score-num">' + fmtR(m.avg) + '</div>' + starsHTML(m.avg, 18) + '<span class="muted sm">' + (m.n ? pl(m.n, REV) : 'Пока нет отзывов') + '</span></div>' +
     '<div class="dist">' + dist.map(d => '<div class="dist-row"><span>' + d.s + '</span><span class="bar"><i style="--w:' + d.p.toFixed(1) + '%"></i></span><span>' + d.c + '</span></div>').join('') + '</div></div>' +
     (m.tags.length ? '<div class="block"><span class="lbl">Чаще всего отмечают</span><div class="tagcloud">' + m.tags.slice(0, 6).map(x => '<span class="tag">' + esc(x.t) + ' <em>' + x.c + '</em></span>').join('') + '</div></div>' : '');
 }
 function revsHTML(m) {
+  if (FB.on && m.source === 'shared' && !FB.revBy[m.id]) return '<p class="empty-sm">Загружаем отзывы…</p>';
   const list = m.reviews.slice();
   if (PM.sort === 'high') list.sort((a, b) => b.r - a.r || (b.createdAt || 0) - (a.createdAt || 0));
   else if (PM.sort === 'low') list.sort((a, b) => a.r - b.r || (b.createdAt || 0) - (a.createdAt || 0));
@@ -2459,7 +2631,7 @@ function profileHTML(m) {
   return '<div class="pf"><div class="pf-l">' +
     '<div class="pf-head">' + avaHTML(m, 'xl') + '<div><p class="eyebrow">' + esc(m.prof) + (m.demo ? ' · пример' : '') + '</p><h2 class="pf-name">' + esc(m.name) + '</h2><p class="pf-sub">' + icon('pin') + esc(m.district || 'Район не указан') + ' · опыт ' + yrs(m.exp) + '</p></div></div>' +
     '<div class="badges">' + badgesHTML(m) + '</div>' +
-    contactHTML(m) +
+    contactHTML(m) + placeHTML(m) +
     (function () { const st = nowStatus(m), tx = schedText(m); return '<div class="block"><span class="lbl">График работы</span><div class="sched"><span class="sched-now ' + (st.on ? 'on' : 'off') + '">' + esc(st.t) + '</span><span>' + esc(tx.days) + ', ' + esc(tx.hours) + '</span>' + (tx.brk ? '<span class="muted sm">Перерыв на отдых ' + esc(tx.brk) + '</span>' : '') + (tx.off ? '<span class="muted sm">Выходные: ' + esc(tx.off) + '</span>' : '') + '</div></div>'; })() +
     '<div class="pf-acts">' + (isMine(m) ? '' : '<button class="btn btn-brass" type="button" id="pm-book-open">' + icon('clock') + 'Записаться</button><button class="btn" type="button" id="pm-chat">' + icon('chat') + 'Написать</button>') + '<button class="fav" type="button" id="pm-fav" data-id="' + esc(m.id) + '" aria-pressed="' + fav + '" aria-label="' + (fav ? 'Убрать из избранного' : 'Добавить в избранное') + '" title="В избранное">' + icon('heart') + '</button><button class="cmp ic-only" type="button" id="pm-cmp" data-id="' + esc(m.id) + '" aria-pressed="' + c + '" aria-label="Сравнить" title="Сравнить">' + icon(c ? 'check' : 'plus') + '</button></div>' +
     '<div class="book" id="pm-book" hidden>' + bookingHTML(m) + '</div>' +
@@ -2481,11 +2653,20 @@ function profileHTML(m) {
     (m.demo || isMine(m) ? '' : '<button class="report-link" type="button" id="pm-report">' + icon('flag') + 'Пожаловаться на мастера</button>') +
     '</div></div>';
 }
+function placeHTML(m) {
+  const g = geoOf(m); if (!g) return '';
+  const km = kmOf(m);
+  return '<div class="block place"><span class="lbl">Где работает</span><p class="muted sm">' + (km != null ? fmtKm(km) + ' от вас. ' : '') +
+    (g.approx ? 'Место показано примерно, в радиусе около 1 км. Точный адрес мастер пришлёт в чате.' : 'Точное место работы мастера.') + '</p>' +
+    '<div class="pf-acts">' + routeBtn(g) + '</div></div>';
+}
 function contactHTML(m) {
   const ph = phoneOf(m);
   if (!ph && FB.on && m.source === 'shared') {
-    return '<div class="contact" id="pm-contact"><div class="contact-num"><span class="lbl">Телефон</span><span class="muted sm">' + (FB.user ? (FB.contacts[m.id] === '' ? 'Мастер не указал номер. Напишите ему в чат' : 'Загружаем номер…') : 'Номер видят только те, кто вошёл по СМС') + '</span></div>' +
-      (FB.user ? '' : '<div class="contact-acts"><button class="btn btn-sm btn-ghost" type="button" id="pm-reveal">' + icon('phone') + 'Показать номер</button></div>') + '</div>';
+    const st = !FB.user ? 'guest' : FB.contacts[m.id] === null ? 'locked' : FB.contacts[m.id] === '' ? 'none' : 'loading';
+    const txt = {guest: 'Номер видят только те, кто вошёл по СМС', locked: 'Номер откроется, когда вы напишете мастеру. Так мы защищаем мастеров от спама', none: 'Мастер не указал номер. Напишите ему в чат', loading: 'Загружаем номер…'}[st];
+    const act = st === 'guest' ? '<button class="btn btn-sm btn-ghost" type="button" id="pm-reveal">' + icon('phone') + 'Показать номер</button>' : st === 'locked' && !isMine(m) ? '<button class="btn btn-sm btn-ghost" type="button" data-pm-write>' + icon('chat') + 'Написать</button>' : '';
+    return '<div class="contact" id="pm-contact"><div class="contact-num"><span class="lbl">Телефон</span><span class="muted sm">' + txt + '</span></div>' + (act ? '<div class="contact-acts">' + act + '</div>' : '') + '</div>';
   }
   return '<div class="contact" id="pm-contact"><div class="contact-num"><span class="lbl">Телефон</span><button class="phone-copy" type="button" id="pm-phone" title="Нажмите, чтобы скопировать">' + esc(ph || '—') + '</button></div><div class="contact-acts"><a class="btn btn-sm btn-ghost" href="' + esc(telHref(ph)) + '">' + icon('phone') + 'Позвонить</a></div></div>';
 }
@@ -2493,10 +2674,12 @@ function openProfile(id, opts) {
   const m = getMaster(id);
   if (!m) { toast('Профиль не найден', 'warn'); return; }
   PM.id = id; PM.sort = 'new'; PM.all = false; PM.day = null; PM.slot = null;
+  if (FB.on && m.source === 'shared') { fbLoadList('reviews', id); fbLoadList('works', id); }
   const el = Modal.open(profileHTML(m), {wide: true, label: m.name, kind: 'profile', onClose: () => { PM.id = null; }});
   const err = (sel, msg) => { const e = $(sel, el); e.textContent = msg; e.hidden = !msg; };
   el.addEventListener('click', e => {
     const t = e.target;
+    if (t.closest('[data-pm-write]')) { openChat(id); return; }
     if (t.closest('#pm-chat')) { requireAccount('Чтобы написать мастеру, создайте аккаунт: имя и номер телефона.', () => openChat(id)); return; }
     if (t.closest('#pm-phone')) { copyText($('#pm-phone', el).textContent, $('#pm-phone', el)); return; }
     if (t.closest('#pm-reveal')) { requireAccount('Чтобы увидеть номер мастера, войдите по номеру телефона. Так мы защищаем мастеров от спама.', () => { if (Modal.kind !== 'profile') openProfile(id); }); return; }
@@ -2561,21 +2744,23 @@ function fitsDoc(body) {
   if (size > 245000) body.avatar = null;
   return body;
 }
-const MASTER_KEYS = ['name', 'prof', 'district', 'exp', 'price', 'unit', 'about', 'services', 'brands', 'schedule', 'today', 'resp', 'avatar', 'photos'];
+const MASTER_KEYS = ['name', 'prof', 'district', 'exp', 'price', 'unit', 'about', 'services', 'brands', 'schedule', 'today', 'resp', 'avatar', 'photos', 'geo'];
 async function fbSaveMaster(data, editing) {
   const body = {};
   MASTER_KEYS.forEach(k => { if (data[k] !== undefined) body[k] = data[k]; });
   body.exp = clamp(parseInt(body.exp, 10) || 0, 0, 60);
   body.price = Math.max(0, Number(body.price) || 0);
   body.resp = clamp(parseInt(body.resp, 10) || 60, 0, 1440);
-  body.avatar = fbImg(body.avatar);
-  body.photos = (body.photos || []).map(fbImg).filter(Boolean).slice(0, 3);
-  fitsDoc(body);
   const phone = String(data.phone || '').trim().slice(0, 24);
   const own = editing && editing.source === 'shared' && editing.ownerUid === shared.uid;
   const id = own ? editing.id : shared.db.collection('masters').doc().id;
   const ok = await sharedWrite(async db => {
-    await db.collection('masters').doc(id).set(Object.assign(body, {ownerUid: shared.uid, verified: own ? !!editing.verified : false, createdAt: own ? (editing.createdAt || Date.now()) : Date.now(), updatedAt: Date.now()}));
+    body.avatar = await toStoreUrl(body.avatar);
+    body.photos = (await Promise.all((body.photos || []).slice(0, 3).map(toStoreUrl))).filter(Boolean);
+    const ref = db.collection('masters').doc(id);
+    // Правка — update: рейтинг, который считает сервер, остаётся нетронутым
+    if (own) await ref.update(Object.assign(body, {updatedAt: Date.now()}));
+    else await ref.set(Object.assign(body, {ownerUid: shared.uid, verified: false, createdAt: Date.now(), updatedAt: Date.now()}));
     if (digits(phone).length >= 7) await db.collection('masterContacts').doc(id).set({ownerUid: shared.uid, phone});
   });
   if (!ok) return null;
@@ -2621,11 +2806,12 @@ async function deleteMaster(m) {
 async function saveReview(m, rv) {
   if (FB.on && m.source === 'shared') {
     if (!FB.user) return {error: 'Войдите по номеру телефона, чтобы оставить отзыв.'};
-    const done = new Set(shared.reviews.map(r => r.id));
+    const done = new Set((FB.revBy[m.id] || []).map(r => r.id));
     const bk = messagesAll().filter(x => x.kind === 'booking' && x.masterId === m.id && x.clientUid === shared.uid && bkStatus(x) === 'accepted' && !done.has(x.id)).pop();
     if (!bk) return {error: 'Отзыв можно оставить после того, как мастер подтвердит вашу запись. Так все отзывы на сайте настоящие.'};
     const ok = await sharedWrite(db => db.collection('reviews').doc(bk.id).set({masterId: m.id, authorUid: shared.uid, a: rv.a, r: rv.r, t: rv.t || '', tags: (rv.tags || []).slice(0, 7), createdAt: TS()}));
     if (!ok) return {error: 'Не получилось опубликовать отзыв. Попробуйте ещё раз.'};
+    delete FB.revBy[m.id]; fbLoadList('reviews', m.id);
     invalidate();
     return 'shared';
   }
@@ -2642,8 +2828,9 @@ async function saveJob(data) {
   if (FB.on) {
     const id = shared.db.collection('jobs').doc().id;
     const body = {ownerUid: shared.uid, cat: data.cat, title: data.title, desc: data.desc || '', district: data.district || '', budget: data.budget || null, when: data.when || 'Не спешу', name: data.name, status: 'open', createdAt: TS()};
+    if (okGeo(data.geo)) body.geo = {lat: data.geo.lat, lng: data.geo.lng, approx: true};
     const ok = await sharedWrite(async db => {
-      await db.collection('jobs').doc(id).set(body);
+      await countedWrite('job', db.collection('jobs').doc(id), body);
       await db.collection('jobContacts').doc(id).set({ownerUid: shared.uid, phone: data.phone});
     });
     if (!ok) return null;
@@ -2663,7 +2850,7 @@ async function saveJob(data) {
 async function addResponse(j, resp) {
   if (FB.on && j.source === 'shared') {
     const body = {jobId: j.id, jobOwnerUid: j.ownerUid, responderUid: shared.uid, participants: [j.ownerUid, shared.uid], name: resp.name, phone: resp.phone, price: resp.price, msg: resp.msg || '', at: TS()};
-    return sharedWrite(db => db.collection('responses').doc(j.id + '_' + shared.uid).set(body));
+    return sharedWrite(db => countedWrite('resp', db.collection('responses').doc(j.id + '_' + shared.uid), body));
   }
   if (j.source === 'shared') {
     const orig = shared.jobs.find(x => x.id === j.id);
@@ -2689,7 +2876,7 @@ async function setJobStatus(j, status) {
 }
 
 /* ---------- каталог ---------- */
-const F = {q: '', words: [], cat: null, district: '', priceMax: 0, minR: 0, verified: false, today: false, sort: 'smart', limit: 9};
+const F = {q: '', words: [], cat: null, district: '', priceMax: 0, minR: 0, verified: false, today: false, sort: 'smart', limit: 9, view: 'list'};
 const stem = w => w.length >= 7 ? w.slice(0, w.length - 3) : w.length >= 5 ? w.slice(0, w.length - 2) : w.length === 4 ? w.slice(0, 3) : w;
 const parseQuery = q => norm(q).split(/[^a-zа-яғӣқӯҳҷ0-9]+/i).filter(w => w.length >= 2 && !STOP.has(w));
 function matchScore(m, words) {
@@ -2700,7 +2887,8 @@ function matchScore(m, words) {
 }
 function filtered() {
   const words = F.words, need = Math.max(1, Math.ceil(words.length / 2));
-  const list = masters().map(m => ({m, s: words.length ? matchScore(m, words) : 1})).filter(x => {
+  // t — сколько слов запроса мастер написал у себя сам (услуги, «О себе»): так находятся и редкие работы, которых нет в списке специальностей
+  const list = masters().map(m => ({m, s: words.length ? matchScore(m, words) : 1, t: words.filter(w => m._hay.indexOf(stem(w)) >= 0).length})).filter(x => {
     const m = x.m;
     if (words.length && x.s < need) return false;
     if (F.cat && m.prof !== F.cat) return false;
@@ -2717,11 +2905,12 @@ function filtered() {
     reviews: (a, b) => b.m.n - a.m.n || b.m.avg - a.m.avg,
     price: (a, b) => a.m.price - b.m.price,
     fast: (a, b) => (a.m.resp || 999) - (b.m.resp || 999) || b.m.score - a.m.score,
-    exp: (a, b) => b.m.exp - a.m.exp
+    exp: (a, b) => b.m.exp - a.m.exp,
+    near: (a, b) => { const x = kmOf(a.m), y = kmOf(b.m); return (x == null ? 1e9 : x) - (y == null ? 1e9 : y) || b.m.score - a.m.score; }
   };
   list.sort((a, b) => (words.length ? b.s - a.s : 0) || S[F.sort](a, b));
   const it = words.length ? intent(F.q) : {cats: [], brand: null}, fk = F.cat ? [] : it.cats;
-  return list.filter(x => (!fk.length || fk.indexOf(x.m.prof) >= 0) && brandFits(x.m, it.brand)).map(x => x.m);
+  return list.filter(x => (!fk.length || fk.indexOf(x.m.prof) >= 0 || (words.length && x.t === words.length && x.m._other < 3)) && brandFits(x.m, it.brand)).map(x => x.m);
 }
 const filtersActive = () => !!(F.words.length || F.cat || F.district || F.priceMax || F.minR || F.verified || F.today);
 function renderCats() {
@@ -2731,7 +2920,7 @@ function renderCats() {
 }
 function renderCatalog(anim) {
   const list = filtered();
-  $('#res-count').textContent = list.length ? 'Найдено ' + pl(list.length, ['мастер', 'мастера', 'мастеров']) : 'Мастеров не найдено';
+  $('#res-count').textContent = (F.cat ? F.cat + ': ' : '') + (list.length ? (F.cat ? 'найдено ' : 'Найдено ') + pl(list.length, ['мастер', 'мастера', 'мастеров']) : (F.cat ? 'мастеров не найдено' : 'Мастеров не найдено'));
   $('#f-reset').hidden = !filtersActive();
   const fn = [F.district, F.priceMax, F.minR, F.verified, F.today, F.sort !== 'smart'].filter(Boolean).length, fe = $('#f-n');
   fe.textContent = String(fn); fe.hidden = !fn;
@@ -2741,7 +2930,8 @@ function renderCatalog(anim) {
   const grid = $('#grid');
   grid.innerHTML = list.length ? list.slice(0, F.limit).map((m, i) => cardHTML(m, i, anim)).join('')
     : '<div class="empty">' + icon('search') + '<p>По такому запросу никого нет. Уберите часть фильтров или разместите заказ на бирже, и мастера откликнутся сами.</p><button class="btn btn-sm" type="button" id="empty-post">Разместить заказ</button></div>';
-  $('#more').hidden = list.length <= F.limit;
+  $('#more').hidden = list.length <= F.limit || F.view === 'map';
+  drawMap();
 }
 function renderDistricts() {
   const sel = $('#f-district'), cur = F.district;
@@ -2767,22 +2957,26 @@ function initCatalog() {
   $('#popular').innerHTML = '<span>Часто ищут:</span>' + POPULAR.map(p => '<button class="chip" type="button" data-q="' + esc(p) + '">' + esc(p) + '</button>').join('');
   $('#popular').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) setQuery(b.dataset.q, true); });
   $('#cat-hint').addEventListener('click', e => { const b = e.target.closest('[data-hcat]'); if (b) { const br = detectBrand(F.q); setQuery(br ? 'мастер ' + br.n : '', false); setCat(b.dataset.hcat); } });
-  attachAC($('#q'), $('#cat-search'), x => {
+  const qac = attachAC($('#q'), $('#cat-search'), x => {
+    if (x.pop) { setQuery(x.pop, true); $('#q').blur(); return; }
     if (x.brand) setQuery('мастер ' + x.brand, true);
     else if (x.svc) setQuery(x.svc, true);
-    else { setQuery('', false); setCat(x.cat); }
-  });
+    else { setQuery('', false); setCat(x.cat); $('#q').blur(); }
+  }, {popular: POPULAR, cats: () => CATS.concat(customProfs())});
   $('#cats').addEventListener('click', e => { const b = e.target.closest('.cat'); if (b) setCat(F.cat === b.dataset.cat ? null : b.dataset.cat); });
   let qt = 0;
   $('#q').addEventListener('input', e => { clearTimeout(qt); const v = e.target.value; $('#q-clear').hidden = !v; qt = setTimeout(() => setQuery(v, false), 180); });
-  $('#cat-search').addEventListener('submit', e => { e.preventDefault(); setQuery($('#q').value, true); });
+  $('#cat-search').addEventListener('submit', e => { e.preventDefault(); qac.close(); $('#q').blur(); setQuery($('#q').value, true); });
   $('#q-clear').addEventListener('click', () => { setQuery('', true); $('#q').focus(); });
   $('#f-district').addEventListener('change', e => { F.district = e.target.value; F.limit = 9; renderCatalog(true); });
   $('#f-price').addEventListener('input', e => { const v = Number(e.target.value); F.priceMax = v >= Number(e.target.max) ? 0 : v; $('#f-price-out').textContent = F.priceMax ? 'до ' + fmt(F.priceMax) : 'любая'; renderCatalog(false); });
   $$('input[name="f-r"]').forEach(r => r.addEventListener('change', () => { F.minR = Number(r.value); renderCatalog(true); }));
   $('#f-verified').addEventListener('change', e => { F.verified = e.target.checked; renderCatalog(true); });
   $('#f-today').addEventListener('change', e => { F.today = e.target.checked; renderCatalog(true); });
-  $('#f-sort').addEventListener('change', e => { F.sort = e.target.value; renderCatalog(true); });
+  $('#f-sort').addEventListener('change', e => { F.sort = e.target.value; if (F.sort === 'near' && !ME.pos) locateMe(); renderCatalog(true); });
+  $('#v-list').addEventListener('click', () => setCatalogView('list'));
+  $('#v-map').addEventListener('click', () => setCatalogView('map'));
+  $('#v-me').addEventListener('click', () => locateMe(() => { F.sort = 'near'; $('#f-sort').value = 'near'; }));
   $('#f-toggle').addEventListener('click', e => { const f = $('#filters'), b = e.currentTarget; f.hidden = !f.hidden; b.setAttribute('aria-expanded', String(!f.hidden)); });
   $('#f-reset').addEventListener('click', () => {
     Object.assign(F, {q: '', words: [], cat: null, district: '', priceMax: 0, minR: 0, verified: false, today: false, limit: 9});
@@ -2825,7 +3019,7 @@ function jobHTML(j) {
   const c = CAT[j.cat] || CATS[0], mine = isMineJob(j), responded = iResponded(j), n = j.responses.length, open = openJobs.has(j.id) && n;
   return '<article class="job" data-id="' + esc(j.id) + '"><span class="job-ic">' + icon(c.ic) + '</span><div class="job-main">' +
     '<div class="job-top"><h3>' + esc(j.title) + '</h3><span class="job-budget">' + (j.budget ? 'до ' + fmt(j.budget) : 'Договорная') + '</span></div>' +
-    '<p class="job-meta">' + (j.demo ? '<span class="ex">пример</span>' : '') + '<span>' + esc(j.cat) + '</span><span>' + icon('pin') + esc(j.district || '—') + '</span><span class="' + (j.when === 'Срочно' ? 'hot' : '') + '">' + icon('clock') + esc(j.when || 'Не спешу') + '</span><span>' + ago(j.createdAt) + '</span></p>' +
+    '<p class="job-meta">' + (j.demo ? '<span class="ex">пример</span>' : '') + '<span>' + esc(j.cat) + '</span><span>' + icon('pin') + (kmOf(j) != null ? '<b class="km">' + fmtKm(kmOf(j)) + '</b>' : esc(j.district || '—')) + '</span><span class="' + (j.when === 'Срочно' ? 'hot' : '') + '">' + icon('clock') + esc(j.when || 'Не спешу') + '</span><span>' + ago(j.createdAt) + '</span></p>' +
     (j.desc ? '<p class="job-desc">' + esc(j.desc) + '</p>' : '') +
     (responded && !mine ? '<div class="job-phone"><span>Телефон заказчика, ' + esc(j.name || 'клиент') + ':</span><output>' + esc(jobPhone(j) || '—') + '</output><button class="link" type="button" data-act="copy">Скопировать</button></div>' : '') +
     '<div class="job-foot"><button class="resp-btn" type="button" data-act="resps" aria-expanded="' + !!open + '"' + (n ? '' : ' disabled') + '>' + (n ? pl(n, RESP) : 'Пока без откликов') + '</button>' +
@@ -2840,17 +3034,81 @@ function renderJobs() {
   const counts = {}; all.forEach(j => { counts[j.cat] = (counts[j.cat] || 0) + 1; });
   const cats = CATS.filter(c => counts[c.k]);
   $('#job-cats').innerHTML = '<button class="chip" type="button" data-jc="" aria-pressed="' + !JF.cat + '">Все · ' + all.length + '</button>' + cats.map(c => '<button class="chip" type="button" data-jc="' + esc(c.k) + '" aria-pressed="' + (JF.cat === c.k) + '">' + esc(c.k) + ' · ' + counts[c.k] + '</button>').join('');
-  const list = all.filter(j => !JF.cat || j.cat === JF.cat);
+  let list = all.filter(j => !JF.cat || j.cat === JF.cat);
+  // Если знаем, где мастер, сначала заказы поблизости
+  if (ME.pos) list = list.slice().sort((a, b) => { const x = kmOf(a), y = kmOf(b); return (x == null ? 1e9 : x) - (y == null ? 1e9 : y); });
+  drawJobsMap();
   $('#jobs-list').innerHTML = list.length ? list.map(jobHTML).join('') : '<div class="empty">' + icon('briefcase') + '<p>Открытых заказов пока нет. Разместите первый, и мастера предложат цену.</p></div>';
 }
 function findJob(id) { return jobsAll().find(j => j.id === id) || null; }
+/* Карта заказов: мастер видит, где рядом нужна работа. Место заказа всегда примерное (около 1 км) */
+const JMAP = {map: null, layer: null, view: 'list', tileErr: false};
+function setJobsView(v) {
+  JMAP.view = v;
+  $('#jv-list').setAttribute('aria-pressed', String(v === 'list'));
+  $('#jv-map').setAttribute('aria-pressed', String(v === 'map'));
+  $('#jmap-box').hidden = v !== 'map';
+  $('#jobs-list').hidden = v === 'map';
+  if (v === 'map') openJobsMap(); else renderJobs();
+}
+async function openJobsMap() {
+  try { await loadLeaflet(); } catch (e) { $('#jmap-note').textContent = 'Карта не загрузилась. Проверьте интернет.'; $('#jmap-note').hidden = false; return; }
+  if (!JMAP.map) {
+    JMAP.map = L.map('jmap').setView(ME.pos ? [ME.pos.lat, ME.pos.lng] : MAPCFG.center, ME.pos ? 14 : MAPCFG.zoom);
+    addBase(JMAP.map, () => {
+      if (JMAP.tileErr) return;
+      JMAP.tileErr = true;
+      $('#jmap-note').textContent = 'Подложка карты здесь не загружается. Заказы показаны точками; на вашем сайте будет обычная карта города.';
+      $('#jmap-note').hidden = false;
+    });
+    JMAP.layer = L.layerGroup().addTo(JMAP.map);
+    JMAP.map.on('click', e => {
+      if (!JMAP.pick) return;
+      JMAP.pick = false; MAPV.pick = false;
+      ME.pos = {lat: e.latlng.lat, lng: e.latlng.lng};
+      JMAP.fitted = false; MAPV.fitted = false;
+      toast('Точка отмечена. Сначала показываем заказы рядом');
+      renderJobs();
+    });
+    $('#jmap').addEventListener('click', e => { const b = e.target.closest('[data-jrespond]'); if (b) openRespond(b.dataset.jrespond); });
+  }
+  setTimeout(() => { if (JMAP.map) JMAP.map.invalidateSize(); }, 60);
+  drawJobsMap();
+}
+function drawJobsMap() {
+  if (!JMAP.map || JMAP.view !== 'map') return;
+  JMAP.layer.clearLayers();
+  const list = jobsAll().filter(j => j.status !== 'closed' && (!JF.cat || j.cat === JF.cat));
+  let n = 0;
+  const pts = [];
+  list.forEach(j => {
+    const g = geoOf(j); if (!g) return;
+    n++; pts.push([g.lat, g.lng]);
+    const c = CAT[j.cat] || CATS[0], km = kmOf(j), mine = isMineJob(j), done = iResponded(j);
+    const ic = L.divIcon({className: '', html: '<span class="mr-pin jpin"><b>' + icon(c.ic) + '</b></span>', iconSize: [36, 36], iconAnchor: [18, 36], popupAnchor: [0, -34]});
+    L.marker([g.lat, g.lng], {icon: ic, title: j.title, keyboard: true}).bindPopup('<div class="mpop"><b>' + esc(j.title) + '</b><span>' + esc(j.cat) + (j.demo ? ' · пример' : '') + ' · ' + esc(j.when || 'Не спешу') + '</span>' +
+      '<span>' + (j.budget ? 'Бюджет до ' + fmt(j.budget) : 'Цена договорная') + (km != null ? ' · ' + fmtKm(km) + ' от вас' : '') + ' · место примерно</span>' +
+      (j.desc ? '<span>' + esc(j.desc.slice(0, 120)) + '</span>' : '') +
+      '<div class="mpop-acts">' + (mine ? '<span>Это ваш заказ</span>' : done ? '<span>Вы уже откликнулись</span>' : '<button class="btn btn-sm" type="button" data-jrespond="' + esc(j.id) + '">Откликнуться</button>') + routeBtn(g, true) + '</div>' +
+      (mine ? '' : '<span>Точный адрес клиент пришлёт в чате после договорённости</span>') + '</div>').addTo(JMAP.layer);
+  });
+  if (ME.pos) L.marker([ME.pos.lat, ME.pos.lng], {icon: L.divIcon({className: '', html: '<span class="mr-me"></span>', iconSize: [18, 18], iconAnchor: [9, 9]}), title: 'Вы здесь', zIndexOffset: 1000}).addTo(JMAP.layer);
+  fitOnce(JMAP, pts);
+  if (!JMAP.tileErr) {
+    $('#jmap-note').textContent = list.length ? (n ? 'На карте ' + pl(n, ['заказ', 'заказа', 'заказов']) + (list.length - n ? '. Ещё ' + (list.length - n) + ' без отметки — они в списке' : '') : 'У этих заказов нет отметки на карте. Смотрите их в списке') : 'Открытых заказов пока нет';
+    $('#jmap-note').hidden = false;
+  }
+}
 function openPostJob(preset) {
   if (FB.on && !isRegistered()) { openAuth({reason: 'Чтобы разместить заказ, войдите по номеру телефона.', then: () => openPostJob(preset)}); return; }
   const me = local.me || {}, pre = preset && typeof preset === 'object' && !(preset instanceof Event) ? preset : {}, pc = (typeof preset === 'string' && CAT[preset]) ? preset : CAT[pre.cat] ? pre.cat : F.cat, wi = WHEN.indexOf(pre.when) >= 0 ? WHEN.indexOf(pre.when) : 2;
   const el = Modal.open('<h2 class="m-h">Новый заказ</h2><p class="m-sub">' + (pre.title ? 'ИИ заполнил заказ по вашему описанию. Проверьте и поправьте, если нужно.' : 'Мастера увидят задачу и предложат цену. Телефон откроется только тем, кто откликнется.') + '</p>' +
     '<form class="mform" id="jp" novalidate>' +
-    '<div class="row2"><div class="fld"><label for="jp-cat">Кто нужен</label><select class="inp sel" id="jp-cat">' + CATS.map(c => '<option' + (pc === c.k ? ' selected' : '') + '>' + esc(c.k) + '</option>').join('') + '</select></div>' +
+    '<div class="row2"><div class="fld"><label for="jp-cat">Кто нужен</label><select class="inp sel" id="jp-cat">' + CATS.concat(customProfs()).map(c => '<option' + (pc === c.k ? ' selected' : '') + '>' + esc(c.k) + '</option>').join('') + '</select></div>' +
     '<div class="fld"><label for="jp-district">Район</label><select class="inp sel" id="jp-district">' + DISTRICTS.map(d => '<option>' + esc(d) + '</option>').join('') + '</select></div></div>' +
+    '<div class="fld"><span class="lab">Где нужна работа</span><div class="map wmap" id="jp-map" aria-label="Карта: нажмите, чтобы отметить место"></div>' +
+    '<div class="wmap-acts"><button class="btn btn-sm btn-ghost" type="button" id="jp-geo-me">' + icon('locate') + 'Моё местоположение</button><button class="link" type="button" id="jp-geo-clear" hidden>Убрать точку</button>' +
+    '<span class="hint">Мастера рядом увидят заказ на карте. Точный адрес не показываем, только примерно, в радиусе около 1 км.</span></div></div>' +
     '<div class="fld"><label for="jp-title">Коротко о задаче *</label><input class="inp" id="jp-title" maxlength="80" placeholder="Например: положить плитку в ванной, 6 м²" value="' + esc(pre.title || '') + '"></div>' +
     '<div class="fld"><label for="jp-desc">Подробности</label><textarea class="inp" id="jp-desc" maxlength="600" placeholder="Что уже есть, какие материалы, когда удобно">' + esc(pre.desc || '') + '</textarea></div>' +
     '<div class="fld"><span class="lab">Когда</span><div class="seg">' + WHEN.map((w, i) => '<label><input type="radio" name="jp-when" id="jp-when-' + i + '" value="' + esc(w) + '"' + (i === wi ? ' checked' : '') + '><span>' + esc(w) + '</span></label>').join('') + '</div></div>' +
@@ -2859,6 +3117,28 @@ function openPostJob(preset) {
     '<div class="fld"><label for="jp-phone">Телефон *</label><input class="inp" id="jp-phone" type="tel" autocomplete="tel" maxlength="24" placeholder="+___ __ ___ __ __" value="' + esc(me.phone || '') + '"></div></div>' +
     '<p class="err" id="jp-err" role="alert" hidden></p><button class="btn btn-brass" type="submit" style="justify-self:start">Опубликовать заказ</button></form>',
   {label: 'Новый заказ', kind: 'post'});
+  // Точка заказа: необязательно, сохраняется примерно (округление ~1 км)
+  let jgeo = ME.pos ? {lat: ME.pos.lat, lng: ME.pos.lng} : null, jmap = null, jpin = null;
+  const drawPin = () => {
+    $('#jp-geo-clear', el).hidden = !jgeo;
+    if (!jmap) return;
+    if (jpin) { jmap.removeLayer(jpin); jpin = null; }
+    if (jgeo) { jpin = L.marker([jgeo.lat, jgeo.lng], {icon: L.divIcon({className: '', html: '<span class="mr-pin jpin"><b>' + icon('briefcase') + '</b></span>', iconSize: [36, 36], iconAnchor: [18, 36]})}).addTo(jmap); jmap.setView([jgeo.lat, jgeo.lng], Math.max(jmap.getZoom(), 14)); }
+  };
+  loadLeaflet().then(() => {
+    if (!document.body.contains($('#jp-map', el))) return;
+    jmap = L.map($('#jp-map', el)).setView(jgeo ? [jgeo.lat, jgeo.lng] : MAPCFG.center, jgeo ? 14 : MAPCFG.zoom);
+    addBase(jmap);
+    jmap.on('click', e => { jgeo = {lat: e.latlng.lat, lng: e.latlng.lng}; drawPin(); });
+    drawPin(); setTimeout(() => jmap.invalidateSize(), 80);
+  }, () => { $('#jp-map', el).hidden = true; });
+  $('#jp-geo-clear', el).addEventListener('click', () => { jgeo = null; drawPin(); });
+  $('#jp-geo-me', el).addEventListener('click', () => {
+    if (!navigator.geolocation) { toast('Нажмите на карту, где нужна работа', 'warn'); return; }
+    navigator.geolocation.getCurrentPosition(p => { jgeo = {lat: p.coords.latitude, lng: p.coords.longitude}; drawPin(); },
+      () => toast('Не удалось определить местоположение. Нажмите на карту, где нужна работа', 'warn'), {timeout: 10000, maximumAge: 300000});
+  });
+  drawPin();
   $('#jp', el).addEventListener('submit', async e => {
     e.preventDefault();
     const v = id => $(id, el).value.trim(), er = $('#jp-err', el);
@@ -2869,7 +3149,7 @@ function openPostJob(preset) {
     if (digits(phone).length < 9) return fail('Проверьте телефон: в нём должно быть не меньше 9 цифр.');
     const w = el.querySelector('input[name="jp-when"]:checked');
     const btn = e.target.querySelector('[type="submit"]'); btn.disabled = true;
-    const res = await saveJob({cat: v('#jp-cat'), title: title.slice(0, 80), desc: v('#jp-desc').slice(0, 600), district: v('#jp-district'), budget: Number(v('#jp-budget')) || null, when: w ? w.value : 'Не спешу', name: name.slice(0, 40), phone: phone.slice(0, 24)});
+    const res = await saveJob({cat: v('#jp-cat'), title: title.slice(0, 80), desc: v('#jp-desc').slice(0, 600), district: v('#jp-district'), budget: Number(v('#jp-budget')) || null, when: w ? w.value : 'Не спешу', name: name.slice(0, 40), phone: phone.slice(0, 24), geo: jgeo ? {lat: Math.round(jgeo.lat * 100) / 100, lng: Math.round(jgeo.lng * 100) / 100, approx: true} : null});
     if (!res) { btn.disabled = false; return; }
     if (!FB.on) { local.me = Object.assign({}, local.me, {name, phone}); saveLocal(); }
     Modal.close(true);
@@ -2911,6 +3191,9 @@ function openRespond(id) {
 }
 function initJobs() {
   $('#btn-post-job').addEventListener('click', () => openPostJob());
+  $('#jv-list').addEventListener('click', () => setJobsView('list'));
+  $('#jv-map').addEventListener('click', () => setJobsView('map'));
+  $('#jv-me').addEventListener('click', () => locateMe());
   $('#btn-ai-job').addEventListener('click', () => openAIHelp(''));
   $('#job-cats').addEventListener('click', e => { const b = e.target.closest('[data-jc]'); if (b) { JF.cat = b.dataset.jc || null; renderJobs(); } });
   $('#jobs-list').addEventListener('click', e => {
@@ -2938,13 +3221,14 @@ function syncBrandsFld() {
 function readWizard() {
   const p = document.querySelector('input[name="w-prof"]:checked');
   return {
-    name: wzVal('#w-name').slice(0, 60), prof: p ? p.value : '', district: wzVal('#w-district').slice(0, 60),
+    name: wzVal('#w-name').slice(0, 60), prof: p ? (p.value === '__other' ? normProf(wzVal('#w-prof-other')) : p.value) : '', district: wzVal('#w-district').slice(0, 60),
     exp: clamp(parseInt($('#w-exp').value, 10) || 0, 0, 60), about: wzVal('#w-about').slice(0, 400),
     price: Math.max(0, parseInt($('#w-price').value, 10) || 0), unit: $('#w-unit').value,
     brands: (p && CAT[p.value] && CAT[p.value].g === 1) ? $$('#w-brands input:checked').map(x => x.value) : [],
     services: WZ.svc.filter(s => s.n.trim()).map(s => ({n: s.n.trim().slice(0, 80), p: s.p.trim().slice(0, 40)})).slice(0, 12),
     phone: wzVal('#w-phone').slice(0, 24), today: $('#w-today').checked, resp: parseInt($('#w-resp').value, 10) || 60,
     avatar: WZ.avatar || null, photos: WZ.photos.slice(0, 3),
+    geo: WZ.geo ? (() => { const ap = $('#w-geo-approx').checked, k = ap ? 100 : 10000; return {lat: Math.round(WZ.geo.lat * k) / k, lng: Math.round(WZ.geo.lng * k) / k, approx: ap}; })() : null,
     schedule: {days: [0, 1, 2, 3, 4, 5, 6].map(g => { const c = document.querySelector('[data-wd="' + g + '"]'); return !!(c && c.checked); }),
       from: $('#w-from').value, to: $('#w-to').value, brk: $('#w-brk').checked, brFrom: $('#w-br-from').value, brTo: $('#w-br-to').value}
   };
@@ -2989,6 +3273,8 @@ function validateStep(s) {
   if (s === 0) {
     if (d.name.length < 2) { wzErr('Укажите имя и фамилию.', '#w-name'); return false; }
     if (digits(d.phone).length < 9) { wzErr('Укажите телефон: в нём должно быть не меньше 9 цифр.', '#w-phone'); return false; }
+    const po = document.querySelector('input[name="w-prof"]:checked');
+    if (po && po.value === '__other' && d.prof.length < 2) { wzErr('Напишите свою специальность, например «Ремонт дронов».', '#w-prof-other'); return false; }
     if (!d.prof) { wzErr('Выберите специальность.'); return false; }
   }
   if (s === 1 && !(d.price > 0)) { wzErr('Укажите цену «от», чтобы клиенты понимали порядок цен.', '#w-price'); return false; }
@@ -3010,11 +3296,17 @@ function onWzChange() {
   draftT = setTimeout(() => { const d = readWizard(); delete d.avatar; delete d.photos; local.draft = d; saveLocal(); }, 500);
 }
 function fillWizard(d) {
+  WZ.geo = okGeo(d.geo) ? {lat: Number(d.geo.lat), lng: Number(d.geo.lng)} : null;
+  $('#w-geo-approx').checked = !(d.geo && d.geo.approx === false);
+  drawWizardPin();
   $('#w-name').value = d.name || ''; $('#w-district').value = d.district || ''; $('#w-exp').value = d.exp || '';
   $('#w-about').value = d.about || ''; $('#w-about-n').textContent = String(($('#w-about').value || '').length);
   $('#w-price').value = d.price || ''; $('#w-unit').value = UNITS.indexOf(d.unit) >= 0 ? d.unit : (CAT[d.prof] ? CAT[d.prof].unit : UNITS[0]);
   $('#w-phone').value = d.phone || ''; $('#w-today').checked = !!d.today; $('#w-resp').value = String(d.resp || 60);
-  $$('input[name="w-prof"]').forEach(r => { r.checked = r.value === d.prof; });
+  const own = !!d.prof && !CAT[d.prof];
+  $$('input[name="w-prof"]').forEach(r => { r.checked = own ? r.value === '__other' : r.value === d.prof; });
+  $('#w-prof-other').value = own ? d.prof : '';
+  $('#w-prof-other-fld').hidden = !own;
   const sc = schedOf(d);
   $$('[data-wd]').forEach(c => { c.checked = sc.days[Number(c.dataset.wd)]; });
   $('#w-from').value = sc.from; $('#w-to').value = sc.to; $('#w-brk').checked = sc.brk;
@@ -3026,7 +3318,7 @@ function fillWizard(d) {
   if (!WZ.svc.length) WZ.svc = [{n: '', p: ''}];
 }
 function resetWizard() {
-  WZ.editing = null; WZ.avatar = null; WZ.photos = [];
+  WZ.editing = null; WZ.avatar = null; WZ.photos = []; WZ.geo = null;
   fillWizard({}); $('#w-agree').checked = false;
   $('#wz-mode').hidden = true; $('#wz-publish').textContent = 'Опубликовать профиль';
   renderSvc(); renderPhotos(); setStep(0); renderPreview();
@@ -3111,8 +3403,35 @@ async function publishWizard() {
   const tryOpen = () => { if (getMaster(res.id)) openProfile(res.id); else if (++tries < 20) setTimeout(tryOpen, 150); };
   tryOpen();
 }
+const WMAP = {map: null, pin: null};
+function drawWizardPin() {
+  const clr = $('#w-geo-clear'); if (clr) clr.hidden = !WZ.geo;
+  if (!WMAP.map) return;
+  if (WMAP.pin) { WMAP.map.removeLayer(WMAP.pin); WMAP.pin = null; }
+  if (WZ.geo) {
+    WMAP.pin = L.marker([WZ.geo.lat, WZ.geo.lng], {icon: L.divIcon({className: '', html: '<span class="mr-pin"><b>★</b></span>', iconSize: [36, 36], iconAnchor: [18, 36]})}).addTo(WMAP.map);
+    WMAP.map.setView([WZ.geo.lat, WZ.geo.lng], Math.max(WMAP.map.getZoom(), 14));
+  }
+}
+async function initWizardMap() {
+  if (WMAP.map) { setTimeout(() => WMAP.map.invalidateSize(), 60); return; }
+  try { await loadLeaflet(); } catch (e) { $('#w-geo-hint').textContent = 'Карта не загрузилась. Можно указать только район.'; return; }
+  WMAP.map = L.map('w-map').setView(WZ.geo ? [WZ.geo.lat, WZ.geo.lng] : MAPCFG.center, WZ.geo ? 14 : MAPCFG.zoom);
+  addBase(WMAP.map);
+  WMAP.map.on('click', e => { WZ.geo = {lat: e.latlng.lat, lng: e.latlng.lng}; drawWizardPin(); onWzChange(); });
+  drawWizardPin();
+  setTimeout(() => WMAP.map.invalidateSize(), 60);
+}
 function initWizard() {
-  $('#w-profs').innerHTML = CATS.map((c, i) => '<label class="prof-opt" for="w-prof-' + i + '"><input type="radio" name="w-prof" id="w-prof-' + i + '" value="' + esc(c.k) + '"><span>' + icon(c.ic) + esc(c.k) + '</span></label>').join('');
+  $('#w-geo-me').addEventListener('click', () => {
+    if (!navigator.geolocation) { toast('Телефон не дал местоположение. Нажмите на карту', 'warn'); return; }
+    navigator.geolocation.getCurrentPosition(p => { WZ.geo = {lat: p.coords.latitude, lng: p.coords.longitude}; initWizardMap().then(drawWizardPin); onWzChange(); },
+      () => toast('Не удалось определить местоположение. Нажмите на карту, где вы работаете', 'warn'), {timeout: 10000, maximumAge: 300000});
+  });
+  $('#w-geo-clear').addEventListener('click', () => { WZ.geo = null; drawWizardPin(); onWzChange(); });
+  $('#w-geo-approx').addEventListener('change', () => onWzChange());
+  $('#w-profs').innerHTML = CATS.map((c, i) => '<label class="prof-opt" for="w-prof-' + i + '"><input type="radio" name="w-prof" id="w-prof-' + i + '" value="' + esc(c.k) + '"><span>' + icon(c.ic) + esc(c.k) + '</span></label>').join('') +
+    '<label class="prof-opt prof-other" for="w-prof-other-r"><input type="radio" name="w-prof" id="w-prof-other-r" value="__other"><span>' + icon('plus') + 'Другое — своя специальность</span></label>';
   $('#w-unit').innerHTML = UNITS.map(u => '<option>' + esc(u) + '</option>').join('');
   $('#w-brands').innerHTML = BRANDS.map((b, i) => '<label class="tg" for="w-br' + i + '"><input type="checkbox" id="w-br' + i + '" value="' + esc(b.n) + '"><span>' + esc(b.n) + (b.t === 'ev' ? ' ⚡' : '') + '</span></label>').join('');
   $('#w-days').innerHTML = WD_MF.map((d, i) => '<label class="dp" for="w-d' + i + '"><input type="checkbox" id="w-d' + i + '" data-wd="' + ((i + 1) % 7) + '"><span>' + d.charAt(0).toUpperCase() + d.slice(1) + '</span></label>').join('');
@@ -3127,6 +3446,9 @@ function initWizard() {
   });
   form.addEventListener('change', e => {
     if (e.target.name === 'w-prof') {
+      const other = e.target.value === '__other';
+      $('#w-prof-other-fld').hidden = !other;
+      if (other) { $('#dl-profs').innerHTML = customProfs().map(c => '<option value="' + esc(c.k) + '"></option>').join(''); setTimeout(() => $('#w-prof-other').focus(), 50); }
       syncBrandsFld();
       const c = CAT[e.target.value];
       if (c && !$('#w-price').value) $('#w-unit').value = c.unit;
@@ -3175,6 +3497,11 @@ function restoreDraft() {
 /* ---------- кабинет ---------- */
 let cabTab = 'me';
 function myRating() {
+  if (FB.on) {
+    const mm = masters().filter(isMine), n = mm.reduce((a, m) => a + m.n, 0), tc = {};
+    mm.forEach(m => m.tags.forEach(x => { tc[x.t] = (tc[x.t] || 0) + x.c; }));
+    return {reviews: [], n, avg: n ? mm.reduce((a, m) => a + m.avg * m.n, 0) / n : 0, tags: Object.keys(tc).map(t => ({t, c: tc[t]})).sort((a, b) => b.c - a.c)};
+  }
   const reviews = [].concat.apply([], masters().filter(isMine).map(m => m.reviews));
   const n = reviews.length, avg = n ? reviews.reduce((s, r) => s + Number(r.r), 0) / n : 0, tc = {};
   reviews.forEach(r => (Array.isArray(r.tags) ? r.tags : []).forEach(t => { tc[t] = (tc[t] || 0) + 1; }));
@@ -3237,7 +3564,10 @@ async function syncAccount() {
   if (FB.on) {
     if (!FB.user || !isRegistered()) return;
     const me = local.me;
-    try { await shared.db.collection('users').doc(FB.user.uid).set({name: me.name.slice(0, 40), phone: FB.user.phoneNumber, about: String(me.about || '').slice(0, 400), avatar: fbImg(me.avatar), role: me.role === 'master' ? 'master' : 'client', createdAt: me.createdAt || Date.now(), updatedAt: Date.now()}); }
+    try {
+      const ava = await toStoreUrl(me.avatar);
+      if (ava !== me.avatar) { local.me = Object.assign({}, local.me, {avatar: ava}); saveLocal(); updateMeBtn(); }
+      await shared.db.collection('users').doc(FB.user.uid).set({name: me.name.slice(0, 40), phone: FB.user.phoneNumber, about: String(me.about || '').slice(0, 400), avatar: ava, role: me.role === 'master' ? 'master' : 'client', createdAt: me.createdAt || Date.now(), updatedAt: Date.now()}); }
     catch (e) { console.warn('Аккаунт не сохранён:', e && e.code); toast(fbErrText(e), 'warn'); }
     return;
   }
@@ -3514,15 +3844,17 @@ function settingsHTML() {
   const data = shared.on && shared.canWrite ? 'Общая база подключена: ваши профили и заказы видят другие посетители.' : 'Записи сохраняются в этом браузере.';
   return '<div class="set-list">' +
     '<p class="cab-sub">Вид</p>' +
-    '<div class="set-row set-col"><div class="set-txt"><b>Тема</b><span>Светлая, тёмная или как в системе</span></div><div class="theme-pick" role="radiogroup" aria-label="Тема">' +
-      THEMES.map(t => '<label class="th-opt"><input type="radio" name="set-theme" value="' + t[0] + '"' + ((local.theme || 'auto') === t[0] ? ' checked' : '') + '><span class="th-sw" style="--a:' + t[2][0] + ';--b:' + t[2][1] + ';--c:' + t[2][2] + '">' + (t[0] === 'auto' ? icon('spark') : '') + '</span><span class="th-name">' + t[1] + '</span></label>').join('') + '</div></div>' +
+    '<div class="set-row set-col"><div class="set-txt"><b>Тема</b><span>Лаванда, неон, светлая или чёрная</span></div><div class="theme-pick" role="radiogroup" aria-label="Тема">' +
+      THEMES.map(t => '<label class="th-opt"><input type="radio" name="set-theme" value="' + t[0] + '"' + (themeOf(local.theme) === t[0] ? ' checked' : '') + '><span class="th-sw" style="--a:' + t[2][0] + ';--b:' + t[2][1] + ';--c:' + t[2][2] + '">' + (t[0] === 'auto' ? icon('spark') : '') + '</span><span class="th-name">' + t[1] + '</span></label>').join('') + '</div></div>' +
     '<div class="set-row"><div class="set-txt"><b>Язык</b><span>Язык интерфейса. Имена, отзывы и описания мастеров остаются на языке автора</span></div><div class="set-ctl"><div class="seg" role="radiogroup" aria-label="Язык" translate="no">' +
       [['ru', 'Русский'], ['en', 'English'], ['tg', 'Тоҷикӣ']].map(o => '<label><input type="radio" name="set-lang" value="' + o[0] + '"' + (LANG.cur === o[0] ? ' checked' : '') + '><span>' + o[1] + '</span></label>').join('') + '</div></div></div>' +
-    setRow('3D-фон', 'Объёмный фон красивый, но нагружает телефон. «Авто» включает его только на мощных устройствах', setSeg('set-3d', '3D-фон', [['auto', 'Авто'], ['on', 'Вкл'], ['off', 'Выкл']], local.bg3d === 'on' || local.bg3d === 'off' ? local.bg3d : 'auto')) +
+    setRow('3D-фон', 'Объёмный фон из плиток красивый, но нагружает телефон. По умолчанию выключен', setSeg('set-3d', '3D-фон', [['off', 'Выкл'], ['on', 'Вкл']], local.bg3d === 'on' ? 'on' : 'off')) +
     setRow('Анимации', 'Спокойный режим убирает движение и ускоряет переходы', setSeg('set-anim', 'Анимации', [['full', 'Полные'], ['calm', 'Спокойные']], local.calm ? 'calm' : 'full')) +
     '<p class="cab-sub">Помощь</p>' +
     setRow('Инструкция', 'Как найти мастера, записаться, разместить заказ и не попасть на мошенников', '<button class="btn btn-sm" type="button" id="set-guide">' + icon('help') + 'Открыть</button>') +
     setRow('Уведомления', pushText(), pushState() === 'on' ? '<button class="btn btn-sm btn-ghost" type="button" id="set-push-off">Выключить</button>' : pushState() === 'off' ? '<button class="btn btn-sm" type="button" id="set-push-on">' + icon('bell') + 'Включить</button>' : '') +
+    (pushState() === 'on' ? setRow('Текст в уведомлении', 'Показывать текст сообщения на экране блокировки. Если выключено, придёт только «Новое сообщение»', '<label class="sw" for="set-preview"><input type="checkbox" id="set-preview"' + (local.pushPreview ? ' checked' : '') + '><i></i><span class="sr">Текст в уведомлении</span></label>') : '') +
+    (Object.keys(local.blockedUids).length ? setRow('Заблокированные', pl(Object.keys(local.blockedUids).length, ['собеседник', 'собеседника', 'собеседников']) + ' не могут вам писать', '<button class="btn btn-sm btn-ghost" type="button" id="set-unblock">Разблокировать всех</button>') : '') +
     setRow('Конфиденциальность', 'Какие данные мы храним и кто их видит', '<a class="btn btn-sm btn-ghost" href="privacy.html" target="_blank" rel="noopener">Читать</a>') +
     '<p class="cab-sub">Каталог</p>' +
     (canInstall() ? setRow('Приложение', 'Установите на телефон или компьютер: откроется как обычное приложение, с иконкой и без адресной строки', '<button class="btn btn-sm" type="button" id="set-install">' + icon('mobile') + 'Установить</button>') : '') +
@@ -3531,14 +3863,15 @@ function settingsHTML() {
     '<p class="cab-sub">Данные и аккаунт</p>' +
     setRow('Где хранятся данные', data, '<span id="set-wipe-wrap"><button class="btn btn-sm btn-ghost" type="button" id="set-wipe">Очистить</button></span>') +
     (isRegistered() ? setRow('Аккаунт', esc(me.name) + ' · ' + esc(me.phone), '<span id="set-out-wrap"><button class="btn btn-sm btn-ghost" type="button" id="set-out">' + icon('logout') + 'Выйти</button></span>') : '') +
+    (isRegistered() ? setRow('Удалить аккаунт', 'Удалятся профиль, анкета мастера, фото, заказы и номер телефона. Отменить нельзя', '<span id="set-del-wrap"><button class="btn btn-sm btn-ghost" type="button" id="set-del">' + icon('trash') + 'Удалить</button></span>') : '') +
     '</div>';
 }
-const THEMES = [['auto', 'Авто', ['#EAF0EF', '#0A6A5D', '#071011']], ['light', 'Светлая', ['#EAF0EF', '#0A6A5D', '#94621A']], ['dark', 'Тёмная', ['#071011', '#3FC4AB', '#DDAE5B']],
-  ['black', 'Чёрная', ['#000000', '#3FD1B5', '#E8BE6A']], ['ocean', 'Океан', ['#06111F', '#4CC2F2', '#FFB86B']], ['sunset', 'Закат', ['#FBF0E8', '#C2410C', '#9D3E8F']], ['lavender', 'Лаванда', ['#F1EEFA', '#6246C9', '#B0561B']]];
-function applyTheme(v) {
-  const r = document.documentElement;
-  if (THEMES.some(t => t[0] === v && v !== 'auto')) r.setAttribute('data-theme', v); else r.removeAttribute('data-theme');
-}
+// Четыре темы: Лаванда (основная), Неон, Светлая, Чёрная
+const THEMES = [['lavender', 'Лаванда', ['#F1EEFA', '#6246C9', '#B0561B']], ['neon', 'Неон', ['#1C1A36', '#E0466F', '#F28C28']],
+  ['light', 'Светлая', ['#EAF0EF', '#0A6A5D', '#94621A']], ['black', 'Чёрная', ['#000000', '#3FD1B5', '#E8BE6A']]];
+// Лаванда — тема по умолчанию; если раньше была выбрана тема, которой больше нет, тоже включаем её
+const themeOf = v => THEMES.some(t => t[0] === v) ? v : 'lavender';
+function applyTheme(v) { document.documentElement.setAttribute('data-theme', themeOf(v)); }
 function applyCalm() { document.documentElement.classList.toggle('calm', !!local.calm); }
 /* Настройки открываются и без аккаунта: язык и тема нужны всем. */
 function openSettings() {
@@ -3574,6 +3907,19 @@ function bindSettings(el) {
   $('#set-wipe', el).addEventListener('click', () => confirmIn('#set-wipe-wrap', 'Удалить всё', () => { try { localStorage.removeItem(LS); } catch (e) { /* нет доступа */ } location.reload(); }));
   const out = $('#set-out', el);
   if (out) out.addEventListener('click', () => confirmIn('#set-out-wrap', 'Да, выйти', logout));
+  const del = $('#set-del', el);
+  if (del) del.addEventListener('click', () => confirmIn('#set-del-wrap', 'Да, удалить навсегда', deleteAccount));
+  const pv = $('#set-preview', el);
+  if (pv) pv.addEventListener('change', () => { local.pushPreview = pv.checked; saveLocal(); syncPush(); });
+  const ub = $('#set-unblock', el);
+  if (ub) ub.addEventListener('click', async () => {
+    ub.disabled = true;
+    for (const [other, th] of Object.entries(local.blockedUids)) {
+      try { if (FB.user) await shared.db.collection('blocks').doc(shared.uid + '_' + other).delete(); } catch (e) { /* уже удалено */ }
+      delete local.blockedUids[other]; delete local.blocked[th];
+    }
+    saveLocal(); invalidate(); refreshSettings(el); toast('Все разблокированы');
+  });
 }
 
 /* ---------- ИИ ----------
@@ -3640,7 +3986,7 @@ async function aiAsk(task, prompt, opts) {
   }
   throw {code: 'no_ai'};
 }
-const CAT_LIST = () => CATS.map(c => c.k).join(', ');
+const CAT_LIST = () => CATS.concat(customProfs()).map(c => c.k).join(', ');
 function aiHelpPrompt(text, nPhotos) {
   return 'Ты помощник сервиса «Мастер рядом», где клиенты ищут мастеров. Клиент описал проблему' + (nPhotos ? ' и приложил ' + nPhotos + ' фото' : '') + '. Определи, какой мастер нужен, и подготовь заказ.\n\n' +
     'Виды работ (поле cat — строго одно из списка или пустая строка): ' + CAT_LIST() + '.\n' +
@@ -3685,7 +4031,7 @@ function openAIHelp(text, opts) {
     out.innerHTML = '<div class="ai-thinking">' + icon('spark') + '<span>ИИ разбирается в проблеме</span><i></i><i></i><i></i></div>';
     try {
       const r = await aiAsk('help', aiHelpPrompt(txt, files.length), {images: files, signal: ctl.signal});
-      last = {cat: CAT[r.cat] ? r.cat : '', brand: BRAND[r.brand] ? r.brand : '', problem: String(r.problem || '').slice(0, 400), urgency: WHEN.indexOf(r.urgency) >= 0 ? r.urgency : 'На этой неделе',
+      last = {cat: CAT[r.cat] || customProfs().some(c => c.k === r.cat) ? r.cat : '', brand: BRAND[r.brand] ? r.brand : '', problem: String(r.problem || '').slice(0, 400), urgency: WHEN.indexOf(r.urgency) >= 0 ? r.urgency : 'На этой неделе',
         title: String(r.title || txt).slice(0, 80), description: String(r.description || txt).slice(0, 600), safety: String(r.safety || '').slice(0, 300), questions: (Array.isArray(r.questions) ? r.questions : []).slice(0, 3).map(q => String(q).slice(0, 160))};
       out.innerHTML = aiResultHTML(last);
     } catch (err) {
@@ -3844,7 +4190,7 @@ function renderChatMain(el, t, force) {
       '<div class="chat-book" id="ch-book" hidden></div>' +
       pushAskHTML() +
       '<p class="chat-safe">' + icon('shield') + '<span>Не переводите предоплату на карту и никому не называйте коды из СМС. Платите после работы.</span></p>' +
-      '<form class="chat-form" id="ch-form"><input class="inp" id="ch-in" maxlength="1000" placeholder="Сообщение" autocomplete="off" aria-label="Сообщение"><button class="btn" type="submit" aria-label="Отправить">' + icon('send') + '</button></form>';
+      '<form class="chat-form" id="ch-form"><button class="icon-btn" type="button" data-chloc aria-label="Отправить моё место" title="Отправить моё место">' + icon('locate') + '</button><input class="inp" id="ch-in" maxlength="1000" placeholder="Сообщение" autocomplete="off" aria-label="Сообщение"><button class="btn" type="submit" aria-label="Отправить">' + icon('send') + '</button></form>';
     force = true;
   }
   $('#ch-sub', main).textContent = sub;
@@ -3858,7 +4204,7 @@ function renderChatMain(el, t, force) {
       return sep + '<div class="bk-card' + (x.from === t.role ? ' me' : '') + '"><span class="lbl">Запрос на запись</span><span class="bk-when">' + esc(fmtDay(x.day)) + ' · ' + esc(x.slot) + '</span>' +
         (x.desc ? '<p>' + esc(x.desc) + '</p>' : '') + '<span class="bk-st st-' + st + '">' + BK_TEXT[t.role][st] + '</span>' + (acts ? '<div class="bk-acts">' + acts + '</div>' : '') + '<time>' + timeShort(x.at) + '</time></div>';
     }
-    return sep + '<div class="msg' + (x.from === t.role ? ' me' : '') + '">' + esc(x.text) + (x.from !== t.role ? trHTML(x) + fraudHTML(x.text) : '') + '<time>' + timeShort(x.at) + '</time></div>';
+    return sep + '<div class="msg' + (x.from === t.role ? ' me' : '') + '">' + msgTextHTML(x.text) + (x.from !== t.role ? trHTML(x) + fraudHTML(x.text) : '') + '<time>' + timeShort(x.at) + '</time></div>';
   }).join('') : '<div class="chat-empty"><p>' + (t.role === 'client' ? 'Опишите задачу: что нужно сделать, район и когда удобно. Мастер ответит здесь.' : 'Сообщений пока нет.') + '</p></div>') +
     (CH.typing === t.id ? '<div class="msg typing">печатает…</div>' : '');
   if (near || force) box.scrollTop = box.scrollHeight;
@@ -3874,6 +4220,26 @@ function refreshChat(force) {
   renderChatMain(el, t, force);
   $('#chat', el).classList.toggle('in-thread', !!t);
 }
+/* Точка из чата: делаем кнопку только для ссылок Google Карт с координатами, остальное — обычный текст */
+const PLACE_RE = /https:\/\/www\.google\.com\/maps\/(?:search|dir)\/\?api=1&(?:query|destination)=(-?\d{1,2}\.\d{1,7}),(-?\d{1,3}\.\d{1,7})/;
+function msgTextHTML(text) {
+  const t = String(text || ''), m = PLACE_RE.exec(t);
+  if (!m) return esc(t);
+  const g = {lat: Number(m[1]), lng: Number(m[2])};
+  if (!okGeo(g)) return esc(t);
+  const before = t.slice(0, m.index).trim(), after = t.slice(m.index + m[0].length).trim();
+  return (before ? esc(before) + ' ' : '') + '<span class="msg-place"><a class="btn btn-sm" href="' + esc(gRoute(g)) + '" target="_blank" rel="noopener noreferrer">' + icon('pin') + 'Проложить маршрут</a>' +
+    '<a class="link" href="' + esc(gPlace(g)) + '" target="_blank" rel="noopener noreferrer">Открыть в Google Картах</a></span>' + (after ? ' ' + esc(after) : '');
+}
+async function sendMyPlace(t) {
+  const send = pos => sendMsg(t, 'Моё место: ' + gPlace(pos));
+  if (!navigator.geolocation) { if (ME.pos) send(ME.pos); else toast('Телефон не дал местоположение', 'warn'); return; }
+  toast('Определяем место…');
+  navigator.geolocation.getCurrentPosition(p => send({lat: p.coords.latitude, lng: p.coords.longitude}),
+    () => { if (ME.pos) send(ME.pos); else toast('Не удалось определить местоположение. Разрешите доступ к геолокации в настройках телефона', 'warn'); },
+    {enableHighAccuracy: true, timeout: 12000, maximumAge: 60000});
+}
+
 /* Подсказка о мошенничестве: номер карты, просьба о предоплате или коде из СМС */
 const FRAUD_RE = /(?:\d[ -]?){16}|предоплат|аванс|переведи|переведите|скинь(те)? на карту|код из смс|код из sms|номер карты|cvv|cvc/i;
 const fraudHTML = text => FRAUD_RE.test(String(text || '')) ? '<span class="msg-warn">Осторожно: похоже на просьбу о деньгах или данных карты. Не платите заранее.</span>' : '';
@@ -3887,8 +4253,15 @@ async function sendMsg(t, text, extra) {
       clientName: String(t.role === 'client' ? (me.name || 'Клиент') : (t.clientName || '')).slice(0, 40), clientPhone: String(t.role === 'client' ? (FB.user.phoneNumber || '') : (t.clientPhone || '')).slice(0, 24),
       from, senderUid: shared.uid, text: text.slice(0, 1000), at: TS()};
     if (extra.kind === 'booking') Object.assign(body, {kind: 'booking', day: Math.round(Number(extra.day) || 0), slot: String(extra.slot || ''), desc: String(extra.desc || '').slice(0, 500), status: 'pending'});
-    const ok = await sharedWrite(db => db.collection('messages').add(body));
+    const ref = shared.db.collection('messages').doc();
+    const ok = await sharedWrite(() => countedWrite('msg', ref, body));
     local.chatSeen[t.id] = Date.now(); saveLocal(); invalidate();
+    // Клиент написал мастеру — теперь ему можно увидеть номер этого мастера
+    if (ok && t.role === 'client' && !FB.contacts[m.id] && !FB.accessTried.has(m.id)) {
+      FB.accessTried.add(m.id);
+      shared.db.collection('contactAccess').doc(m.id + '_' + shared.uid).set({msgId: ref.id}).catch(() => null)
+        .then(() => { delete FB.contacts[m.id]; invalidate(); });
+    }
     return ok;
   }
   const body = Object.assign({thread: t.id, masterId: t.masterId, masterName: t.masterName || (m && m.name) || '', clientKey: t.clientKey,
@@ -3945,6 +4318,7 @@ function openChat(masterId, threadId) {
     if (e.target.closest('[data-push-on]')) { local.pushAsked = true; saveLocal(); const pa = $('#push-ask', el); if (pa) pa.remove(); enablePush(); return; }
     if (e.target.closest('[data-push-no]')) { local.pushAsked = true; saveLocal(); const pa = $('#push-ask', el); if (pa) pa.remove(); return; }
     const t = chatThreads().find(x => x.id === CH.thread);
+    if (e.target.closest('[data-chloc]') && t) { sendMyPlace(t); return; }
     if (e.target.closest('[data-chreport]') && t) { openReport('message', t.id, t.id); return; }
     if (e.target.closest('[data-chbook]') && t) {
       const p = $('#ch-book', el), m = getMaster(t.masterId);
@@ -4007,13 +4381,13 @@ function pushText() {
     unsupported: 'Этот браузер не поддерживает уведомления'})[pushState()];
 }
 async function pushToken() {
-  if (!(window.firebase && firebase.messaging)) await loadScript('firebase-messaging-compat.js');
+  if (!(window.firebase && firebase.messaging)) await loadScript('vendor/firebase-messaging-compat.js');
   const reg = await navigator.serviceWorker.register('sw.js');
   await navigator.serviceWorker.ready;
   return firebase.messaging().getToken({vapidKey: CFG.vapidKey, serviceWorkerRegistration: reg});
 }
 async function savePushToken(token) {
-  await shared.db.collection('pushTokens').doc(token).set({uid: FB.user.uid, ua: navigator.userAgent.slice(0, 200), createdAt: TS()});
+  await shared.db.collection('pushTokens').doc(token).set({uid: FB.user.uid, ua: navigator.userAgent.slice(0, 200), preview: !!local.pushPreview, createdAt: TS()});
   local.pushToken = token; local.pushOn = true; saveLocal();
 }
 async function enablePush() {
@@ -4040,10 +4414,51 @@ function syncPush() {
 }
 const pushAskHTML = () => pushState() === 'off' && !local.pushAsked ? '<div class="push-ask" id="push-ask">' + icon('bell') + '<span>Включите уведомления, чтобы узнать об ответе, даже когда приложение закрыто</span><button class="btn btn-sm" type="button" data-push-on>Включить</button><button class="btn btn-sm btn-ghost" type="button" data-push-no>Не сейчас</button></div>' : '';
 
+/* ---------- удаление аккаунта ---------- */
+async function deleteAccount() {
+  const wipeLocal = () => {
+    local.me = null; local.loggedOut = true; local.pushOn = false; local.pushToken = null; local.chatSeen = {}; local.blocked = {}; local.blockedUids = {};
+    local.masters = []; local.jobs = []; local.msgs = []; local.works = []; local.requests = []; local.reviews = []; local.favs = [];
+    saveLocal(); updateMeBtn(); invalidate(); Modal.close(true);
+  };
+  if (!FB.on) { wipeLocal(); toast('Аккаунт и данные удалены из этого браузера'); return; }
+  if (!FB.user) return;
+  // Google разрешает удалить аккаунт только сразу после входа: если вход был давно, просим подтвердить номер
+  const last = Date.parse((FB.user.metadata && FB.user.metadata.lastSignInTime) || '') || 0;
+  if (Date.now() - last > 4 * 60 * 1000) {
+    toast('Для удаления подтвердите номер ещё раз', 'warn');
+    await FB.auth.signOut().catch(() => null);
+    openAuth({reason: 'Подтвердите номер кодом из СМС, чтобы удалить аккаунт.', then: deleteAccount});
+    return;
+  }
+  const me = FB.user.uid, db = shared.db;
+  toast('Удаляем аккаунт…');
+  try {
+    for (const m of shared.masters.filter(x => x.ownerUid === me)) {
+      const ws = await db.collection('works').where('masterId', '==', m.id).get();
+      for (const w of ws.docs) if (w.get('ownerUid') === me) await w.ref.delete();
+      await db.collection('masterContacts').doc(m.id).delete().catch(() => null);
+      await db.collection('masters').doc(m.id).delete();
+    }
+    const js = await db.collection('jobs').where('ownerUid', '==', me).get();
+    for (const j of js.docs) { await db.collection('jobContacts').doc(j.id).delete().catch(() => null); await j.ref.delete(); }
+    if (local.pushToken) await db.collection('pushTokens').doc(local.pushToken).delete().catch(() => null);
+    await db.collection('users').doc(me).delete().catch(() => null);
+    try { const all = await FB.storage.ref('u/' + me).listAll(); await Promise.all(all.items.map(i => i.delete().catch(() => null))); } catch (e) { /* фото уберёт сервер */ }
+    await FB.user.delete();
+  } catch (e) {
+    console.warn('Удаление аккаунта:', e && e.code);
+    toast(e && e.code === 'auth/requires-recent-login' ? 'Войдите заново и повторите удаление' : fbErrText(e), 'warn');
+    return;
+  }
+  wipeLocal();
+  toast('Аккаунт и данные удалены');
+}
+
 /* ---------- работы мастера ---------- */
 function worksOf(masterId) {
   const seen = new Set();
-  return shared.works.concat(local.works).filter(w => w && w.masterId === masterId && fbImg(w.photo) && !seen.has(w.id) && seen.add(w.id)).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  return (FB.on ? (FB.worksBy[masterId] || []) : shared.works).concat(local.works).filter(w => w && w.masterId === masterId && validImg(w.photo) && !seen.has(w.id) && seen.add(w.id)).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 }
 function worksHTML(m) {
   const own = isMine(m), list = worksOf(m.id), old = (Array.isArray(m.photos) ? m.photos : []).map(validImg).filter(Boolean);
@@ -4092,8 +4507,9 @@ function openAddWork(masterId) {
     const btn = e.target.querySelector('[type="submit"]'); btn.disabled = true;
     const text = $('#wk-text', el).value.trim().slice(0, 300);
     if (FB.on && m.source === 'shared') {
-      const ok = await sharedWrite(db => db.collection('works').add({ownerUid: shared.uid, masterId: m.id, photo, text, createdAt: TS()}));
+      const ok = await sharedWrite(async db => { const url = await uploadImg(photo); if (!url) throw {code: 'invalid-argument'}; await countedWrite('work', db.collection('works').doc(), {ownerUid: shared.uid, masterId: m.id, photo: url, text, createdAt: TS()}); });
       if (!ok) { btn.disabled = false; return; }
+      delete FB.worksBy[m.id]; fbLoadList('works', m.id);
     } else {
       local.works.unshift({id: uid('w'), masterId: m.id, photo, text, createdAt: Date.now()});
       if (!saveLocal()) { local.works.shift(); btn.disabled = false; return; }
@@ -4106,7 +4522,11 @@ function openAddWork(masterId) {
 async function deleteWork(id) {
   const lw = local.works.find(w => w.id === id);
   if (lw) { local.works = local.works.filter(w => w.id !== id); saveLocal(); invalidate(); return; }
-  if (await sharedWrite(db => db.collection('works').doc(id).delete())) invalidate();
+  const w = Object.values(FB.worksBy).reduce((a, l) => a.concat(l), []).find(x => x.id === id);
+  if (await sharedWrite(db => db.collection('works').doc(id).delete())) {
+    if (w) { delete FB.worksBy[w.masterId]; fbLoadList('works', w.masterId); }
+    invalidate();
+  }
 }
 
 /* ---------- жалобы ---------- */
@@ -4116,7 +4536,7 @@ function openReport(type, targetId, threadId) {
     '<form class="mform" id="rp" novalidate>' +
     '<div class="fld"><label for="rp-reason">Причина *</label><select class="inp sel" id="rp-reason">' + REPORT_REASONS.map(r => '<option>' + esc(r) + '</option>').join('') + '</select></div>' +
     '<div class="fld"><label for="rp-text">Что случилось</label><textarea class="inp" id="rp-text" maxlength="500" placeholder="Коротко опишите ситуацию"></textarea></div>' +
-    (threadId ? '<label class="check" for="rp-block"><input type="checkbox" id="rp-block" checked><span>Скрыть этот диалог у меня</span></label>' : '') +
+    (threadId ? '<label class="check" for="rp-block"><input type="checkbox" id="rp-block" checked><span>' + (FB.on ? 'Заблокировать: собеседник больше не сможет мне писать' : 'Скрыть этот диалог у меня') + '</span></label>' : '') +
     '<p class="err" id="rp-err" role="alert" hidden></p><button class="btn" type="submit" style="justify-self:start">Отправить жалобу</button></form>',
   {label: 'Пожаловаться', kind: 'report'});
   $('#rp', el).addEventListener('submit', async e => {
@@ -4124,11 +4544,20 @@ function openReport(type, targetId, threadId) {
     const btn = e.target.querySelector('[type="submit"]'); btn.disabled = true;
     const body = {reason: $('#rp-reason', el).value.slice(0, 60), text: $('#rp-text', el).value.trim().slice(0, 500)};
     if (FB.on) {
-      const ok = await sharedWrite(db => db.collection('reports').add(Object.assign(body, {reporterUid: shared.uid, targetType: type, targetId: String(targetId).slice(0, 200), createdAt: TS()})));
+      const ok = await sharedWrite(db => countedWrite('report', db.collection('reports').doc(), Object.assign(body, {reporterUid: shared.uid, targetType: type, targetId: String(targetId).slice(0, 200), createdAt: TS()})));
       if (!ok) { btn.disabled = false; return; }
     }
     const bl = $('#rp-block', el);
-    if (bl && bl.checked) { local.blocked[threadId] = true; if (CH.thread === threadId) CH.thread = null; saveLocal(); invalidate(); }
+    if (bl && bl.checked) {
+      // В настоящей базе блокировка серверная: собеседник больше не сможет написать
+      const th = threads().find(x => x.id === threadId) || {};
+      local.blocked[threadId] = true; if (CH.thread === threadId) CH.thread = null;
+      const other = th.role === 'client' ? ((th.msgs || [])[0] || {}).masterUid : th.clientKey;
+      if (FB.on && FB.user && other && other !== shared.uid) {
+        shared.db.collection('blocks').doc(shared.uid + '_' + other).set({at: TS()}).then(() => { local.blockedUids[other] = threadId; saveLocal(); }, e => console.warn('Блокировка:', e && e.code));
+      }
+      saveLocal(); invalidate();
+    }
     Modal.close(true);
     toast('Спасибо! Жалоба отправлена модератору');
   });
@@ -4315,6 +4744,8 @@ function setView(id, push) {
   if (VIEWS.indexOf(id) < 0) id = 'catalog';
   const r = document.documentElement, changed = r.dataset.view !== id;
   r.dataset.view = id;
+  if (id === 'join') initWizardMap();
+  if (id === 'catalog' && F.view === 'map' && MAPV.map) setTimeout(() => MAPV.map.invalidateSize(), 60);
   $$('.nav a[data-nav]').forEach(a => a.setAttribute('aria-current', a.dataset.nav === id ? 'true' : 'false'));
   $$('#tabbar [data-tab]').forEach(b => b.setAttribute('aria-current', b.dataset.tab === id ? 'true' : 'false'));
   if (changed) {
@@ -4342,6 +4773,143 @@ function renderStatus() {
 }
 function renderAll() {
   renderCats(); renderDistricts(); renderPriceRange(); renderCatalog(false); renderJobs(); renderTray(); updateFavBadge(); updateChatBadge(); refreshProfile(); refreshChat(); Intro.renderKpis(false); renderStatus();
+}
+
+/* ---------- карта мастеров ----------
+   Карта — Leaflet + OpenStreetMap. Местоположение клиента остаётся только в его телефоне и никуда не отправляется.
+   Мастер сам отмечает точку работы; по умолчанию она показывается примерно (округление ~1 км). */
+const MAPCFG = Object.assign({center: [38.5598, 68.787], zoom: 12, tiles: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}, CFG.map || {});
+const ME = {pos: null, asking: false};
+// Спутниковый снимок (Esri World Imagery). Для большого трафика возьмите ключ ArcGIS или MapTiler и впишите адрес в config.js → map.satellite
+const SAT = Object.assign({tiles: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attribution: 'Снимки &copy; Esri'},
+  CFG.map && CFG.map.satellite ? {tiles: CFG.map.satellite, attribution: CFG.map.satelliteAttribution || ''} : {});
+/* Подложка: «Схема» (улицы и дома) и «Спутник». onErr — если плитки не грузятся */
+function addBase(map, onErr) {
+  const street = L.tileLayer(MAPCFG.tiles, {maxZoom: 19, attribution: MAPCFG.attribution, className: 'tiles-street'});
+  const sat = L.tileLayer(SAT.tiles, {maxZoom: 19, attribution: SAT.attribution, className: 'tiles-sat'});
+  if (onErr) { street.on('tileerror', onErr); sat.on('tileerror', onErr); }
+  street.addTo(map);
+  L.control.layers({'Схема': street, 'Спутник': sat}, null, {position: 'topright', collapsed: false}).addTo(map);
+  return street;
+}
+/* Маршрут и место в Google Картах: на телефоне откроется приложение Google Карты и поведёт как навигатор */
+const ll = g => Number(g.lat).toFixed(6) + ',' + Number(g.lng).toFixed(6);
+const gRoute = g => 'https://www.google.com/maps/dir/?api=1&destination=' + ll(g);
+const gPlace = g => 'https://www.google.com/maps/search/?api=1&query=' + ll(g);
+const routeBtn = (g, sm) => '<a class="btn ' + (sm ? 'btn-sm ' : '') + 'btn-ghost" href="' + esc(gRoute(g)) + '" target="_blank" rel="noopener noreferrer">' + icon('pin') + (g.approx ? 'Маршрут к району' : 'Маршрут в Google Картах') + '</a>';
+const LEAFLET = {js: 'vendor/leaflet/leaflet.js', p: null};
+function loadLeaflet() {
+  if (window.L) return Promise.resolve();
+  if (!LEAFLET.p) LEAFLET.p = loadScript(LEAFLET.js).catch(e => { LEAFLET.p = null; throw e; });
+  return LEAFLET.p;
+}
+// Районы примеров (Душанбе): примерные центры
+const DISTRICT_GEO = {'Центр': [38.5737, 68.7738], 'Северный район': [38.6040, 68.7790], 'Южный район': [38.5290, 68.7830], 'Восточный район': [38.5640, 68.8330], 'Западный район': [38.5700, 68.7200]};
+const okGeo = g => g && typeof g === 'object' && isFinite(g.lat) && isFinite(g.lng) && Math.abs(g.lat) <= 90 && Math.abs(g.lng) <= 180 && !(g.lat === 0 && g.lng === 0);
+function geoOf(m) {
+  if (!m) return null;
+  if (okGeo(m.geo)) return {lat: Number(m.geo.lat), lng: Number(m.geo.lng), approx: m.geo.approx !== false};
+  if (m.demo) {
+    const c = DISTRICT_GEO[m.district] || MAPCFG.center, h = hash(m.id);
+    return {lat: c[0] + ((h % 1000) / 1000 - 0.5) * 0.03, lng: c[1] + (((h >>> 10) % 1000) / 1000 - 0.5) * 0.04, approx: true};
+  }
+  return null;
+}
+function distKm(a, b) {
+  const R = 6371, rad = x => x * Math.PI / 180, dLat = rad(b.lat - a.lat), dLng = rad(b.lng - a.lng);
+  const q = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(q));
+}
+const kmOf = m => { const g = geoOf(m); return ME.pos && g ? distKm(ME.pos, g) : null; };
+const fmtKm = d => d == null ? '' : d < 1 ? Math.max(100, Math.round(d * 10) * 100) + ' м' : (d < 10 ? fmt1(d) : fmt(d)) + ' км';
+/* Где я: спрашиваем браузер; если нельзя — человек нажимает на карту */
+function locateMe(after) {
+  if (ME.asking) return;
+  const fail = () => {
+    ME.asking = false;
+    toast('Не удалось определить местоположение. Откройте карту и нажмите на место, где вы находитесь', 'warn');
+    MAPV.pick = true; JMAP.pick = true;
+    if (document.documentElement.dataset.view === 'jobs') { if (JMAP.view !== 'map') setJobsView('map'); }
+    else if (F.view !== 'map') setCatalogView('map');
+  };
+  if (!navigator.geolocation) { fail(); return; }
+  ME.asking = true;
+  try {
+    navigator.geolocation.getCurrentPosition(p => {
+      ME.asking = false;
+      ME.pos = {lat: p.coords.latitude, lng: p.coords.longitude};
+      toast('Показываем мастеров рядом с вами');
+      if (after) after();
+      MAPV.fitted = false; JMAP.fitted = false;
+      renderCatalog(false); renderJobs();
+    }, fail, {enableHighAccuracy: false, timeout: 10000, maximumAge: 300000});
+  } catch (e) { fail(); }
+}
+const MAPV = {map: null, layer: null, me: null, pick: false, tileErr: false, fitted: false};
+/* Один раз подобрать масштаб: видно ближайшие точки и вас (не дальше 15 ближайших, чтобы не уйти на весь город) */
+function fitOnce(V, pts) {
+  if (V.fitted || !V.map || !pts.length) return;
+  V.fitted = true;
+  let use = pts;
+  if (ME.pos) use = pts.slice().sort((a, b) => distKm(ME.pos, {lat: a[0], lng: a[1]}) - distKm(ME.pos, {lat: b[0], lng: b[1]})).slice(0, 15).concat([[ME.pos.lat, ME.pos.lng]]);
+  V.map.fitBounds(L.latLngBounds(use), {padding: [36, 36], maxZoom: 15});
+}
+function setCatalogView(v) {
+  F.view = v;
+  $('#v-list').setAttribute('aria-pressed', String(v === 'list'));
+  $('#v-map').setAttribute('aria-pressed', String(v === 'map'));
+  $('#map-box').hidden = v !== 'map';
+  $('#grid').hidden = v === 'map';
+  renderCatalog(false);
+  if (v === 'map') openMap();
+}
+async function openMap() {
+  try { await loadLeaflet(); } catch (e) { $('#map-note').textContent = 'Карта не загрузилась. Проверьте интернет.'; $('#map-note').hidden = false; return; }
+  if (!MAPV.map) {
+    const c = ME.pos ? [ME.pos.lat, ME.pos.lng] : MAPCFG.center;
+    MAPV.map = L.map('map', {zoomControl: true, attributionControl: true}).setView(c, ME.pos ? 14 : MAPCFG.zoom);
+    addBase(MAPV.map, () => {
+      if (MAPV.tileErr) return;
+      MAPV.tileErr = true;
+      $('#map-note').textContent = 'Подложка карты здесь не загружается. Мастера показаны точками; на вашем сайте будет обычная карта города.';
+      $('#map-note').hidden = false;
+    });
+    MAPV.layer = L.layerGroup().addTo(MAPV.map);
+    MAPV.map.on('click', e => {
+      if (!MAPV.pick) return;
+      MAPV.pick = false;
+      ME.pos = {lat: e.latlng.lat, lng: e.latlng.lng};
+      toast('Точка отмечена. Показываем мастеров рядом');
+      renderCatalog(false);
+    });
+    $('#map').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b) openProfile(b.dataset.open); });
+  }
+  setTimeout(() => { if (MAPV.map) MAPV.map.invalidateSize(); }, 60);
+  drawMap();
+}
+function drawMap() {
+  if (!MAPV.map || F.view !== 'map') return;
+  MAPV.layer.clearLayers();
+  const list = filtered(), pts = [];
+  list.forEach(m => {
+    const g = geoOf(m); if (!g) return;
+    pts.push([g.lat, g.lng]);
+    const ic = L.divIcon({className: '', html: '<span class="mr-pin' + (m.verified ? ' ok' : '') + '"><b>' + esc(fmtR(m.avg) === '—' ? '•' : fmtR(m.avg)) + '</b></span>', iconSize: [36, 36], iconAnchor: [18, 36], popupAnchor: [0, -34]});
+    const km = kmOf(m);
+    L.marker([g.lat, g.lng], {icon: ic, title: m.name, keyboard: true}).bindPopup('<div class="mpop"><b>' + esc(m.name) + '</b><span>' + esc(m.prof) + (m.demo ? ' · пример' : '') + '</span>' +
+      '<span>★ ' + fmtR(m.avg) + ' · ' + (m.n ? pl(m.n, REV) : 'пока без отзывов') + '</span><span>от ' + fmt(m.price) + ' ' + esc(m.unit) + (km != null ? ' · ' + fmtKm(km) + ' от вас' : '') + (g.approx ? ' · место примерно' : '') + '</span>' +
+      '<div class="mpop-acts"><button class="btn btn-sm" type="button" data-open="' + esc(m.id) + '">Открыть профиль</button>' + routeBtn(g, true) + '</div></div>').addTo(MAPV.layer);
+  });
+  if (ME.pos) {
+    L.marker([ME.pos.lat, ME.pos.lng], {icon: L.divIcon({className: '', html: '<span class="mr-me"></span>', iconSize: [18, 18], iconAnchor: [9, 9]}), title: 'Вы здесь', zIndexOffset: 1000}).addTo(MAPV.layer);
+  }
+  fitOnce(MAPV, pts);
+  const without = list.length - pts.length;
+  if (!MAPV.tileErr) {
+    $('#map-note').textContent = list.length ? (pts.length ? 'На карте ' + pl(pts.length, ['мастер', 'мастера', 'мастеров']) + (without ? '. Ещё ' + without + ' без отметки — они в списке' : '') : 'Эти мастера ещё не отметили место на карте. Смотрите их в списке') : '';
+    $('#map-note').hidden = !list.length;
+  }
 }
 
 /* ---------- приложение на телефон (PWA) ---------- */

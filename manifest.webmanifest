@@ -9,16 +9,53 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0C2B27",
-  "theme_color": "#0C2B27",
-  "categories": ["lifestyle", "business", "utilities"],
+  "background_color": "#F1EEFA",
+  "theme_color": "#F1EEFA",
+  "categories": [
+    "lifestyle",
+    "business",
+    "utilities"
+  ],
   "icons": [
-    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
-    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
-    {"src": "maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    {"name": "Каталог мастеров", "url": "./#catalog", "icons": [{"src": "icon-192.png", "sizes": "192x192"}]},
-    {"name": "Биржа заказов", "url": "./#jobs", "icons": [{"src": "icon-192.png", "sizes": "192x192"}]}
+    {
+      "name": "Каталог мастеров",
+      "url": "./#catalog",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Биржа заказов",
+      "url": "./#jobs",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }

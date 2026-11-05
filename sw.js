@@ -1,10 +1,10 @@
 /* Офлайн-режим приложения «Мастер рядом».
    Кэшируются только файлы самого сайта. Запросы к базе и ИИ идут напрямую и не сохраняются.
    После изменения файлов сайта увеличьте VERSION, чтобы у всех обновилось. */
-const VERSION = 'mr-v4';
+const VERSION = 'mr-v12';
 // Библиотеки из vendor/ не скачиваются заранее: телефону 3D не нужен, а Firebase сохранится при первом запуске
 const SHELL = ['./', 'index.html', 'app.js', 'config.js', 'privacy.html', 'manifest.webmanifest',
-  'icon-192.png', 'icon-512.png', 'maskable-512.png', 'apple-touch-icon.png', 'favicon-48.png'];
+  'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-48.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -16,7 +16,7 @@ self.addEventListener('fetch', e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin) return;
   // Библиотеки и иконки меняются редко: сначала из кэша
-  if (/\.(png)$|-compat\.js$|three\.min\.js$/.test(url.pathname)) {
+  if (/\/(vendor|icons)\//.test(url.pathname)) {
     e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => { if (res.ok) caches.open(VERSION).then(c => c.put(req, res.clone())); return res; })));
     return;
   }
@@ -37,8 +37,8 @@ self.addEventListener('push', e => {
     if (list.some(c => c.visibilityState === 'visible' && c.focused)) return;
     return self.registration.showNotification(String(m.title || 'Мастер рядом').slice(0, 80), {
       body: String(m.body || 'Новое сообщение').slice(0, 200),
-      icon: 'icon-192.png',
-      badge: 'favicon-48.png',
+      icon: 'icons/icon-192.png',
+      badge: 'icons/favicon-48.png',
       tag: String(m.tag || 'mr'),
       renotify: true,
       data: {url: String(m.url || './')}

@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <!-- Политика безопасности: скрипты только с этого сайта и сервисов Google для входа по СМС. Если ИИ-сервер на своём домене, добавьте его в connect-src. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://www.google.com https://*.workers.dev http://127.0.0.1:9099 http://127.0.0.1:8080; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.gstatic.com https://firebasestorage.googleapis.com http://127.0.0.1:9199 https://tile.openstreetmap.org https://server.arcgisonline.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://www.google.com https://*.workers.dev http://127.0.0.1:9099 http://127.0.0.1:8080 http://127.0.0.1:9199; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Мастер рядом</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0C2B27">
-<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F1EEFA">
+<link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Мастер рядом">
@@ -19,6 +19,7 @@
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@500;600;700&display=swap">
 <style>
 /* Layout: первый экран — презентация из шести слайдов поверх живого 3D-пола из керамической плитки; ниже каталог, биржа заказов, калькулятор, регистрация мастера и вопросы на полупрозрачных плитах шириной до 1240px. */
@@ -748,8 +749,40 @@ textarea.inp{height:auto;min-height:104px;padding:12px 14px;resize:vertical;line
 #sx-res{display:grid}
 /* цветовые темы */
 :root[data-theme="black"]{--bg:#000000; --surface:#0B0B0C; --surface-2:#141416; --panel:rgba(12,12,13,.92); --glass:rgba(0,0,0,.74); --glass-line:rgba(255,255,255,.07); --overlay:rgba(0,0,0,.7); --ink:#F2F2F2; --ink-2:#C9C9CC; --muted:#8E8E94; --line:#1E1E21; --line-2:#303035; --accent:#3FD1B5; --accent-ink:#00140F; --accent-soft:#0C2620; --brass:#E8BE6A; --brass-ink:#1F1503; --brass-soft:#231B0D; --star:#F4C04E; --ok:#5FD38D; --ok-soft:#0D2618; --hot:#FF8A70; --hot-soft:#331610; --deep:#0A0A0B; --deep-2:#18181B; --deep-ink:#F2F2F2; --deep-muted:#9A9AA0; --deep-line:rgba(255,255,255,.08); --deep-accent:#E8BE6A; --scrim:rgba(0,0,0,.94); --scrim-2:rgba(0,0,0,.55); --glare:rgba(63,209,181,.12); --glaze-hi:rgba(255,255,255,.05); --glaze-sheen:rgba(255,255,255,.06); --shadow-1:0 1px 2px rgba(0,0,0,.6),0 10px 24px -12px rgba(0,0,0,.9); --shadow-2:0 2px 8px rgba(0,0,0,.6),0 30px 60px -20px rgba(0,0,0,.95); --tile:#101011; --tile-var:#1B1B1E; --grout:#000000; --glaze-1:#1F8E7C; --glaze-2:#B8893C; --glaze-3:#4F7398; color-scheme:dark}
-:root[data-theme="ocean"]{--bg:#06111F; --surface:#0B1A2C; --surface-2:#10233A; --panel:rgba(11,26,44,.9); --glass:rgba(6,17,31,.74); --glass-line:rgba(255,255,255,.08); --overlay:rgba(0,6,14,.62); --ink:#E6F1FB; --ink-2:#BCD0E4; --muted:#88A2BC; --line:#17304A; --line-2:#26466C; --accent:#4CC2F2; --accent-ink:#021624; --accent-soft:#0E2C45; --brass:#FFB86B; --brass-ink:#2A1600; --brass-soft:#2D2113; --star:#FFC857; --ok:#5ED6A0; --ok-soft:#0D2C24; --hot:#FF8E7A; --hot-soft:#3A1C1A; --deep:#08182A; --deep-2:#0F2944; --deep-ink:#E6F1FB; --deep-muted:#93AECA; --deep-line:rgba(230,241,251,.1); --deep-accent:#FFB86B; --scrim:rgba(6,17,31,.93); --scrim-2:rgba(6,17,31,.5); --glare:rgba(76,194,242,.14); --glaze-hi:rgba(255,255,255,.06); --glaze-sheen:rgba(255,255,255,.08); --shadow-1:0 1px 2px rgba(0,0,0,.45),0 10px 24px -12px rgba(0,0,0,.75); --shadow-2:0 2px 8px rgba(0,0,0,.45),0 30px 60px -20px rgba(0,0,0,.85); --tile:#0E2238; --tile-var:#163150; --grout:#030A13; --glaze-1:#2A8FC0; --glaze-2:#C98A3E; --glaze-3:#5B6FD0; color-scheme:dark}
-:root[data-theme="sunset"]{--bg:#FBF0E8; --surface:#FFFFFF; --surface-2:#FFF6F0; --panel:rgba(255,255,255,.9); --glass:rgba(255,247,241,.78); --glass-line:rgba(255,255,255,.8); --overlay:rgba(40,16,8,.38); --ink:#2A140C; --ink-2:#4A2C20; --muted:#7A5C4E; --line:#EED9CB; --line-2:#DFC0AC; --accent:#C2410C; --accent-ink:#FFFFFF; --accent-soft:#FBE1D3; --brass:#9D3E8F; --brass-ink:#FFFFFF; --brass-soft:#F5E1F1; --star:#E08A00; --ok:#1A7743; --ok-soft:#D8EFE0; --hot:#B42318; --hot-soft:#FDE2DD; --deep:#3A160C; --deep-2:#5A2412; --deep-ink:#FFF1E8; --deep-muted:#E2B9A3; --deep-line:rgba(255,241,232,.14); --deep-accent:#FFB37A; --scrim:rgba(251,240,232,.95); --scrim-2:rgba(251,240,232,.6); --glare:rgba(194,65,12,.1); --glaze-hi:rgba(255,255,255,.9); --glaze-sheen:rgba(255,255,255,.7); --shadow-1:0 1px 2px rgba(42,20,12,.05),0 8px 20px -10px rgba(42,20,12,.22); --shadow-2:0 2px 6px rgba(42,20,12,.06),0 28px 56px -22px rgba(42,20,12,.4); --tile:#FFF1E7; --tile-var:#F4D8C6; --grout:#C9A08A; --glaze-1:#D9622B; --glaze-2:#9D3E8F; --glaze-3:#C08A1E; color-scheme:light}
+:root[data-theme="neon"]{--bg:#1C1A36; --surface:#2B2754; --surface-2:#342F63; --panel:rgba(50,45,96,.94); --glass:rgba(32,29,64,.82); --glass-line:rgba(185,179,236,.14); --overlay:rgba(10,8,30,.62); --ink:#F2F0FF; --ink-2:#D1CCF4; --muted:#A7A1D6; --line:#3D3874; --line-2:#565093; --accent:#FF7A9A; --accent-ink:#2B0B1A; --accent-soft:#4A2A58; --brass:#FFA94D; --brass-ink:#2A1600; --brass-soft:#4A3528; --star:#FFB547; --ok:#66D9A8; --ok-soft:#1E3F3F; --hot:#FF8A99; --hot-soft:#4A2238; --deep:#25224A; --deep-2:#2F2B5E; --deep-ink:#F2F0FF; --deep-muted:#B4AEE0; --deep-line:rgba(242,240,255,.1); --deep-accent:#FFA94D; --scrim:rgba(28,26,54,.94); --scrim-2:rgba(28,26,54,.55); --glare:rgba(255,122,154,.14); --glaze-hi:rgba(255,255,255,.07); --glaze-sheen:rgba(255,255,255,.08); --shadow-1:0 1px 2px rgba(8,6,25,.5),0 12px 26px -14px rgba(8,6,25,.85); --shadow-2:0 2px 8px rgba(8,6,25,.5),0 30px 60px -22px rgba(8,6,25,.95); --tile:#2E2A5C; --tile-var:#3A3572; --grout:#14122B; --glaze-1:#8F80E0; --glaze-2:#E2416B; --glaze-3:#F28C28; --lav:#8F80E0; --lav-2:#6E60C2; color-scheme:dark}
+/* Неон: лёгкий фон без 3D — градиент, звёзды и «пол» из сетки в перспективе. Рисуется один раз, при прокрутке не перерисовывается */
+html[data-theme="neon"] body{background:radial-gradient(900px 520px at 50% -8%,#3A3478 0%,rgba(58,52,120,0) 65%),var(--bg)}
+html[data-theme="neon"] .bg-fallback{display:block;opacity:1;background:radial-gradient(1.5px 1.5px at 12% 18%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1.5px 1.5px at 78% 12%,rgba(255,255,255,.45),transparent 60%),radial-gradient(1px 1px at 35% 32%,rgba(255,255,255,.4),transparent 60%),radial-gradient(1.5px 1.5px at 88% 38%,rgba(255,255,255,.35),transparent 60%),radial-gradient(1px 1px at 22% 52%,rgba(255,255,255,.35),transparent 60%),radial-gradient(1px 1px at 64% 24%,rgba(255,255,255,.4),transparent 60%),radial-gradient(600px 300px at 85% 30%,rgba(226,65,107,.10),transparent 70%),radial-gradient(520px 300px at 10% 40%,rgba(143,128,224,.12),transparent 70%)}
+html[data-theme="neon"] .bg-fallback::after{content:"";position:absolute;left:-50%;right:-50%;bottom:-6%;height:46%;transform:perspective(420px) rotateX(62deg);transform-origin:50% 100%;background:repeating-linear-gradient(90deg,rgba(143,128,224,.22) 0 1px,transparent 1px 64px),repeating-linear-gradient(0deg,rgba(143,128,224,.22) 0 1px,transparent 1px 64px);-webkit-mask-image:linear-gradient(to top,#000 10%,transparent 85%);mask-image:linear-gradient(to top,#000 10%,transparent 85%)}
+html[data-theme="neon"] #bg3d{display:none}
+/* Неон: формы как на образце — скруглённые сиреневые карточки, кнопки-«таблетки», круглые значки */
+html[data-theme="neon"] .card,html[data-theme="neon"] .job,html[data-theme="neon"] .ai-tile,html[data-theme="neon"] .wz,html[data-theme="neon"] .perk,html[data-theme="neon"] .rv-form,html[data-theme="neon"] .score,html[data-theme="neon"] .contact,html[data-theme="neon"] .filters{background:linear-gradient(155deg,#3D3778 0%,#2E2A5E 100%);border-color:rgba(185,179,236,.16);border-radius:22px}
+html[data-theme="neon"] .modal{background:linear-gradient(170deg,#2F2B5E 0%,#25224C 100%);border-color:rgba(185,179,236,.16)}
+html[data-theme="neon"] .btn{border-radius:999px;background:linear-gradient(135deg,#E0466F 0%,#C42C57 100%);color:#fff;box-shadow:0 10px 24px -12px rgba(226,65,107,.9)}
+html[data-theme="neon"] .btn-brass{background:linear-gradient(135deg,#FFB347 0%,#F28C28 100%);color:#2A1600;box-shadow:0 10px 24px -12px rgba(242,140,40,.9)}
+html[data-theme="neon"] .btn-ghost{background:rgba(143,128,224,.16);color:var(--ink);border-color:rgba(185,179,236,.24);box-shadow:none}
+html[data-theme="neon"] .icon-btn{border-radius:50%;background:linear-gradient(145deg,#4A4290,#352F6B);border-color:rgba(185,179,236,.2)}
+html[data-theme="neon"] .chip,html[data-theme="neon"] .sx-cat,html[data-theme="neon"] .cats .cat{background:rgba(143,128,224,.16);border-color:rgba(185,179,236,.2);color:var(--ink)}
+html[data-theme="neon"] .chip[aria-pressed="true"],html[data-theme="neon"] .cat[aria-pressed="true"]{background:linear-gradient(135deg,#E0466F,#C42C57);border-color:transparent;color:#fff}
+html[data-theme="neon"] .cat[aria-pressed="true"] .ic,html[data-theme="neon"] .cat[aria-pressed="true"] small{color:#fff}
+html[data-theme="neon"] .search,html[data-theme="neon"] .inp,html[data-theme="neon"] .sel{background:#24214A;border-color:#4A4488}
+html[data-theme="neon"] .search{border-radius:999px}
+html[data-theme="neon"] .search .btn{padding-inline:20px}
+html[data-theme="neon"] .ava{border-radius:50%}
+html[data-theme="neon"] .ai-orb,html[data-theme="neon"] .tab-ai-in{background:linear-gradient(135deg,#E0466F 0%,#F28C28 100%);color:#fff}
+html[data-theme="neon"] .ai-tile-ic{border-radius:50%;background:linear-gradient(145deg,#5A4FA8,#423A85);color:#fff}
+html[data-theme="neon"] .tabbar{background:rgba(30,27,62,.96);border-top-color:rgba(185,179,236,.14)}
+html[data-theme="neon"] .tab-ai-in{border-color:#1E1B3E;box-shadow:0 8px 20px rgba(226,65,107,.45)}
+html[data-theme="neon"] .hdr.is-solid{background:rgba(28,26,54,.92)}
+html[data-theme="neon"] .view-sw button[aria-pressed="true"]{background:linear-gradient(135deg,#E0466F,#C42C57);color:#fff}
+html[data-theme="neon"] .mr-pin{background:linear-gradient(135deg,#E0466F,#C42C57)}
+html[data-theme="neon"] .mr-pin b{color:#fff}
+/* тёмная карта в неоне */
+html[data-theme="neon"] .tiles-street{filter:invert(1) hue-rotate(205deg) brightness(.82) contrast(.92) saturate(.7)}
+html[data-theme="neon"] .map{background:#24214A}
+html[data-theme="neon"] .leaflet-bar a{background:#2B2754;color:var(--ink);border-color:#3D3874}
+html[data-theme="neon"] .leaflet-control-attribution{background:rgba(28,26,54,.8);color:var(--muted)}
+html[data-theme="neon"] .leaflet-control-attribution a{color:var(--accent)}
 :root[data-theme="lavender"]{--bg:#F1EEFA; --surface:#FFFFFF; --surface-2:#F7F5FD; --panel:rgba(255,255,255,.9); --glass:rgba(247,245,253,.78); --glass-line:rgba(255,255,255,.8); --overlay:rgba(22,14,48,.38); --ink:#1C1630; --ink-2:#3A3258; --muted:#6B6488; --line:#E1DCF2; --line-2:#C9C1E6; --accent:#6246C9; --accent-ink:#FFFFFF; --accent-soft:#E6E0FA; --brass:#B0561B; --brass-ink:#FFFFFF; --brass-soft:#F8E6D9; --star:#D18A06; --ok:#1A7743; --ok-soft:#D8EFE0; --hot:#B5432D; --hot-soft:#F8E0D9; --deep:#1E1640; --deep-2:#2E2363; --deep-ink:#F1EEFA; --deep-muted:#B7AEDB; --deep-line:rgba(241,238,250,.12); --deep-accent:#F2B27A; --scrim:rgba(241,238,250,.95); --scrim-2:rgba(241,238,250,.6); --glare:rgba(98,70,201,.1); --glaze-hi:rgba(255,255,255,.9); --glaze-sheen:rgba(255,255,255,.7); --shadow-1:0 1px 2px rgba(28,22,48,.05),0 8px 20px -10px rgba(28,22,48,.22); --shadow-2:0 2px 6px rgba(28,22,48,.06),0 28px 56px -22px rgba(28,22,48,.4); --tile:#F3F0FC; --tile-var:#DCD4F3; --grout:#A79BD0; --glaze-1:#6246C9; --glaze-2:#B0561B; --glaze-3:#2F7FA8; color-scheme:light}
 .theme-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;width:100%}
 .th-opt{position:relative;display:grid;justify-items:center;gap:6px;padding:10px 6px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;transition:border-color .2s,transform .25s var(--ease)}
@@ -861,8 +894,57 @@ html[data-view="catalog"] #catalog,html[data-view="jobs"] #jobs,html[data-view="
   .cats .cat .ic{width:20px;height:20px}
   .cats .cat b{font-size:14px;white-space:nowrap}
   .cats .cat small{display:none}
-  #jobs .sec-h{font-size:24px}
+  #jobs .sec-h{font-size:20px}
+  .job-cats{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px 12px;padding:0 16px 4px;scrollbar-width:none}
+  .job-cats::-webkit-scrollbar{display:none}
+  .job-cats>*{flex:none}
 }
+/* карта мастеров */
+.view-sw{display:inline-flex;gap:2px;padding:3px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line)}
+.view-sw button{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:0;border-radius:9px;background:none;color:var(--ink-2);font:600 13.5px var(--body);cursor:pointer}
+.view-sw button .ic{width:16px;height:16px}
+.view-sw button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-1)}
+#v-me .ic{width:17px;height:17px}
+.map-box{position:relative;margin-bottom:18px}
+.map{width:100%;height:min(64vh,620px);min-height:340px;border-radius:18px;border:1px solid var(--line);overflow:hidden;background:var(--surface-2);z-index:0}
+.map-note{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.wmap{height:240px;min-height:0;border-radius:14px}
+.wmap-acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.mr-pin{display:grid;place-items:center;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--accent);border:2px solid var(--surface);box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.mr-pin b{transform:rotate(45deg);color:var(--accent-ink);font:700 12px/1 var(--body)}
+.mr-pin.ok{background:var(--ok)}
+.mr-pin.jpin{background:linear-gradient(135deg,#FFB347,#F28C28)}
+.mr-pin.jpin b{color:#2A1600}
+.mr-pin b{display:grid;place-items:center}
+.mr-pin .ic{display:block;width:16px;height:16px;color:inherit}
+html[data-theme="neon"] .mr-pin.jpin{background:linear-gradient(135deg,#FFB347,#F28C28)}
+html[data-theme="neon"] .mr-pin.jpin b{color:#2A1600}
+.mr-me{display:block;width:18px;height:18px;border-radius:50%;background:#2F7BF6;border:3px solid #fff;box-shadow:0 0 0 6px rgba(47,123,246,.25)}
+.leaflet-container{font:inherit}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface);color:var(--ink)}
+.leaflet-popup-content{margin:12px 14px;min-width:200px}
+.mpop{display:grid;gap:6px}
+.mpop b{font-size:15px}
+.mpop span{font-size:13px;color:var(--muted)}
+.mpop .btn{justify-self:start;margin-top:4px}
+.mpop-acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mpop-acts .btn{margin-top:0}
+.msg-place{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:4px}
+.msg-place .btn{white-space:nowrap}
+.chat-form .icon-btn{flex:none;width:46px;height:46px}
+.leaflet-control-layers{border-radius:12px!important;border:1px solid var(--line)!important;background:var(--surface)!important;color:var(--ink);font:500 13px var(--body)}
+.leaflet-control-layers-base label{display:flex;align-items:center;gap:6px;padding:2px 2px}
+
+.card .km{color:var(--accent);font-weight:600}
+@media (max-width:860px){.map{height:calc(100dvh - 430px)}.view-sw button{padding:0 10px}}
+.theme-pick{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media (max-width:520px){.theme-pick{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+#catalog .res-bar{margin-top:16px}
+.ac-cats{display:flex;flex-wrap:wrap;gap:6px;padding:2px 6px 8px}
+.ac-cat{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:500 13.5px var(--body);cursor:pointer}
+.ac-cat .ic{width:17px;height:17px;color:var(--accent)}
+.ac-cat:hover,.ac-cat[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.prof-other span{border-style:dashed}
 /* нижнее меню */
 .tabbar{display:none}
 @media (max-width:860px){
@@ -1137,13 +1219,18 @@ html.lite .card,html.lite .job{box-shadow:none}
         <button class="clear" type="button" id="q-clear" aria-label="Очистить поиск" hidden><span data-icon="close"></span></button>
         <button class="btn" type="submit">Найти</button>
       </form>
-      <div class="popular" id="popular"></div>
+      <div class="popular" id="popular" hidden></div>
       <div class="cat-groups" id="cat-hint" hidden></div>
-      <div class="cats" id="cats" role="group" aria-label="Специальности"></div>
+      <div class="cats" id="cats" role="group" aria-label="Специальности" hidden></div>
       <div class="res-bar">
         <span class="res-count" id="res-count"></span>
         <button class="btn btn-ghost btn-sm" type="button" id="f-toggle" aria-expanded="false" aria-controls="filters"><span data-icon="filter"></span>Фильтры<em class="f-n" id="f-n" hidden></em></button>
         <button class="link" type="button" id="f-reset" hidden>Сбросить</button>
+        <div class="view-sw" role="group" aria-label="Вид">
+          <button type="button" id="v-list" aria-pressed="true"><span data-icon="tiles"></span>Список</button>
+          <button type="button" id="v-map" aria-pressed="false"><span data-icon="pin"></span>Карта</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" type="button" id="v-me"><span data-icon="locate"></span>Где я</button>
       </div>
       <div class="filters" id="filters" hidden>
         <label class="fl" for="f-district">Район
@@ -1170,8 +1257,13 @@ html.lite .card,html.lite .job{box-shadow:none}
             <option value="price">Сначала дешевле</option>
             <option value="fast">Быстрее отвечают</option>
             <option value="exp">По опыту</option>
+            <option value="near">Ближе ко мне</option>
           </select>
         </label>
+      </div>
+      <div class="map-box" id="map-box" hidden>
+        <div class="map" id="map" role="application" aria-label="Карта мастеров"></div>
+        <p class="map-note" id="map-note" hidden></p>
       </div>
       <div class="grid" id="grid"></div>
       <div class="more"><button class="btn btn-ghost" type="button" id="more" hidden>Показать ещё</button></div>
@@ -1185,6 +1277,17 @@ html.lite .card,html.lite .job{box-shadow:none}
         <div class="sec-sub">Разместите заказ за минуту. Мастера откликаются со своей ценой, а вы выбираете того, кто подходит по срокам и отзывам.<br><span class="sec-btns"><button class="btn btn-brass magnet" type="button" id="btn-post-job"><span data-icon="plus"></span>Разместить заказ</button><button class="btn btn-ghost magnet" type="button" id="btn-ai-job"><span data-icon="spark"></span>Заказ по фото с ИИ</button></span></div>
       </div>
       <div class="job-cats" id="job-cats" role="group" aria-label="Фильтр заказов"></div>
+      <div class="res-bar">
+        <div class="view-sw" role="group" aria-label="Вид">
+          <button type="button" id="jv-list" aria-pressed="true"><span data-icon="briefcase"></span>Список</button>
+          <button type="button" id="jv-map" aria-pressed="false"><span data-icon="pin"></span>Карта</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" type="button" id="jv-me"><span data-icon="locate"></span>Где я</button>
+      </div>
+      <div class="map-box" id="jmap-box" hidden>
+        <div class="map" id="jmap" role="application" aria-label="Карта заказов"></div>
+        <p class="map-note" id="jmap-note" hidden></p>
+      </div>
       <div class="jobs" id="jobs-list"></div>
     </div>
   </section>
@@ -1248,7 +1351,13 @@ html.lite .card,html.lite .job{box-shadow:none}
               <div class="fld"><label for="w-name">Имя и фамилия *</label><input class="inp" id="w-name" autocomplete="name" maxlength="60" placeholder="Например: Иван Петров"></div>
               <div class="fld"><label for="w-district">Город, район</label><input class="inp" id="w-district" list="dl-districts" maxlength="60" placeholder="Центр"></div>
             </div>
+            <div class="fld" id="w-geo-fld"><span class="lab">Где вы работаете</span>
+              <div class="map wmap" id="w-map" aria-label="Карта: нажмите, чтобы отметить место работы"></div>
+              <div class="wmap-acts"><button class="btn btn-sm btn-ghost" type="button" id="w-geo-me"><span data-icon="locate"></span>Моё местоположение</button><button class="link" type="button" id="w-geo-clear" hidden>Убрать точку</button><span class="hint" id="w-geo-hint">Нажмите на карту, чтобы поставить точку. Клиенты рядом найдут вас быстрее.</span></div>
+              <label class="check" for="w-geo-approx"><input type="checkbox" id="w-geo-approx" checked><span>Показывать клиентам примерно, в радиусе около 1 км, без точного адреса</span></label>
+            </div>
             <div class="fld"><span class="lab" id="w-prof-lab">Специальность *</span><div class="profs" id="w-profs" role="radiogroup" aria-labelledby="w-prof-lab"></div></div>
+            <div class="fld" id="w-prof-other-fld" hidden><label for="w-prof-other">Ваша специальность *</label><input class="inp" id="w-prof-other" maxlength="40" list="dl-profs" autocomplete="off" placeholder="Например: ремонт дронов, установка солнечных панелей"><datalist id="dl-profs"></datalist><span class="hint">Напишите так, как вашу работу называют клиенты. Специальность появится в поиске сразу после публикации.</span></div>
             <div class="row2">
               <div class="fld"><label for="w-phone">Телефон *</label><input class="inp" id="w-phone" type="tel" autocomplete="tel" maxlength="24" placeholder="+___ __ ___ __ __"><span class="hint">Номер станет вашим аккаунтом вместе с именем</span></div>
               <div class="fld"><label for="w-exp">Опыт, лет</label><input class="inp" id="w-exp" type="number" min="0" max="60" inputmode="numeric" placeholder="5"></div>

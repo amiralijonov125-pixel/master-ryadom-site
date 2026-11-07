@@ -835,7 +835,7 @@ const I18N_SRC = `Мастер рядом|Master Nearby|Усто наздик
 Да, выйти|Yes, sign out|Ҳа, баромадан
 Язык и тема|Language and theme|Забон ва мавзӯъ
 Каталог|Catalog|Феҳрист
-ИИ пока не подключён. На claude.ai он работает сразу, а на своём сайте заработает, когда вы подключите ключ.|AI isn't connected yet. On claude.ai it works right away; on your own site it works once you connect a key.|ЗС ҳоло пайваст нест. Дар claude.ai фавран кор мекунад, дар сайти худ баъди пайваст кардани калид кор мекунад.
+ИИ-помощник сейчас недоступен. Найдите мастера обычным поиском, это займёт минуту.|The AI assistant is unavailable right now. Use the regular search to find a pro, it only takes a minute.|Ёрдамчии ЗС ҳозир дастрас нест. Устоҳоро бо ҷустуҷӯи оддӣ ёбед, ин як дақиқа вақт мегирад.
 Вы не разрешили этой странице использовать ИИ. Разрешение можно дать после перезагрузки страницы.|You didn't allow this page to use AI. You can allow it after reloading the page.|Шумо ба ин саҳифа истифодаи ЗС-ро иҷозат надодед. Баъди аз нав боркунии саҳифа иҷозат додан мумкин.
 Слишком много запросов к ИИ. Подождите минуту и попробуйте снова.|Too many AI requests. Wait a minute and try again.|Дархостҳо ба ЗС хеле зиёданд. Як дақиқа интизор шавед ва боз кӯшиш кунед.
 ИИ не стал отвечать на этот запрос. Опишите задачу по-другому.|AI declined this request. Describe the job differently.|ЗС ба ин дархост ҷавоб надод. Корро бо тарзи дигар шарҳ диҳед.
@@ -1163,7 +1163,10 @@ Android (Chrome)|Android (Chrome)|Android (Chrome)
 Например: ремонт дронов, установка солнечных панелей|For example: drone repair, solar panel installation|Масалан: таъмири дронҳо, насби панелҳои офтобӣ
 Напишите так, как вашу работу называют клиенты. Специальность появится в поиске сразу после публикации.|Write it the way clients call your work. It will appear in search right after you publish.|Нависед, ки мизоҷон кори шуморо чӣ ном мебаранд. Ихтисос пас аз нашр дарҳол дар ҷустуҷӯ пайдо мешавад.
 Напишите свою специальность, например «Ремонт дронов».|Write your trade, for example "Drone repair".|Ихтисоси худро нависед, масалан «Таъмири дронҳо».
-Новая специальность|New trade|Ихтисоси нав`;
+Новая специальность|New trade|Ихтисоси нав
+Стекло|Glass|Шиша
+Стекло, лаванда, неон, светлая или чёрная|Glass, lavender, neon, light or black|Шиша, лаванда, неон, равшан ё сиёҳ
+Стекло или лаванда|Glass or lavender|Шиша ё лаванда`;
 const LANGS = ['ru', 'en', 'tg'];
 const LANG = {cur: 'ru'};
 const I18 = {en: new Map(), tg: new Map()}, I18L = {en: new Map(), tg: new Map()}, I18C = {en: new Map(), tg: new Map()};
@@ -3844,7 +3847,7 @@ function settingsHTML() {
   const data = shared.on && shared.canWrite ? 'Общая база подключена: ваши профили и заказы видят другие посетители.' : 'Записи сохраняются в этом браузере.';
   return '<div class="set-list">' +
     '<p class="cab-sub">Вид</p>' +
-    '<div class="set-row set-col"><div class="set-txt"><b>Тема</b><span>Лаванда, неон, светлая или чёрная</span></div><div class="theme-pick" role="radiogroup" aria-label="Тема">' +
+    '<div class="set-row set-col"><div class="set-txt"><b>Тема</b><span>Стекло или лаванда</span></div><div class="theme-pick" role="radiogroup" aria-label="Тема">' +
       THEMES.map(t => '<label class="th-opt"><input type="radio" name="set-theme" value="' + t[0] + '"' + (themeOf(local.theme) === t[0] ? ' checked' : '') + '><span class="th-sw" style="--a:' + t[2][0] + ';--b:' + t[2][1] + ';--c:' + t[2][2] + '">' + (t[0] === 'auto' ? icon('spark') : '') + '</span><span class="th-name">' + t[1] + '</span></label>').join('') + '</div></div>' +
     '<div class="set-row"><div class="set-txt"><b>Язык</b><span>Язык интерфейса. Имена, отзывы и описания мастеров остаются на языке автора</span></div><div class="set-ctl"><div class="seg" role="radiogroup" aria-label="Язык" translate="no">' +
       [['ru', 'Русский'], ['en', 'English'], ['tg', 'Тоҷикӣ']].map(o => '<label><input type="radio" name="set-lang" value="' + o[0] + '"' + (LANG.cur === o[0] ? ' checked' : '') + '><span>' + o[1] + '</span></label>').join('') + '</div></div></div>' +
@@ -3866,11 +3869,10 @@ function settingsHTML() {
     (isRegistered() ? setRow('Удалить аккаунт', 'Удалятся профиль, анкета мастера, фото, заказы и номер телефона. Отменить нельзя', '<span id="set-del-wrap"><button class="btn btn-sm btn-ghost" type="button" id="set-del">' + icon('trash') + 'Удалить</button></span>') : '') +
     '</div>';
 }
-// Четыре темы: Лаванда (основная), Неон, Светлая, Чёрная
-const THEMES = [['lavender', 'Лаванда', ['#F1EEFA', '#6246C9', '#B0561B']], ['neon', 'Неон', ['#1C1A36', '#E0466F', '#F28C28']],
-  ['light', 'Светлая', ['#EAF0EF', '#0A6A5D', '#94621A']], ['black', 'Чёрная', ['#000000', '#3FD1B5', '#E8BE6A']]];
-// Лаванда — тема по умолчанию; если раньше была выбрана тема, которой больше нет, тоже включаем её
-const themeOf = v => THEMES.some(t => t[0] === v) ? v : 'lavender';
+// Две темы в одном стиле: Стекло (основная, тёмная) и Лаванда (светлая)
+const THEMES = [['glass', 'Стекло', ['#4A3D33', '#C9BBFF', '#FFB46B']], ['lavender', 'Лаванда', ['#F1EEFA', '#6246C9', '#B0561B']]];
+// Стекло — тема по умолчанию; если раньше была выбрана тема, которой больше нет, тоже включаем её
+const themeOf = v => THEMES.some(t => t[0] === v) ? v : 'glass';
 function applyTheme(v) { document.documentElement.setAttribute('data-theme', themeOf(v)); }
 function applyCalm() { document.documentElement.classList.toggle('calm', !!local.calm); }
 /* Настройки открываются и без аккаунта: язык и тема нужны всем. */
@@ -3935,7 +3937,8 @@ async function initAI() {
 }
 const aiOn = () => !AI.denied && !!(AI.sample || AI_CONFIG.endpoint);
 const AI_ERR = {
-  no_ai: 'ИИ пока не подключён. На claude.ai он работает сразу, а на своём сайте заработает, когда вы подключите ключ.',
+  // Это видят посетители, поэтому без слов про ключи и настройки
+  no_ai: 'ИИ-помощник сейчас недоступен. Найдите мастера обычным поиском, это займёт минуту.',
   not_granted: 'Вы не разрешили этой странице использовать ИИ. Разрешение можно дать после перезагрузки страницы.',
   rate_limited: 'Слишком много запросов к ИИ. Подождите минуту и попробуйте снова.',
   refused: 'ИИ не стал отвечать на этот запрос. Опишите задачу по-другому.',
@@ -3991,7 +3994,7 @@ function aiHelpPrompt(text, nPhotos) {
   return 'Ты помощник сервиса «Мастер рядом», где клиенты ищут мастеров. Клиент описал проблему' + (nPhotos ? ' и приложил ' + nPhotos + ' фото' : '') + '. Определи, какой мастер нужен, и подготовь заказ.\n\n' +
     'Виды работ (поле cat — строго одно из списка или пустая строка): ' + CAT_LIST() + '.\n' +
     'Марки машин (поле brand — только если речь о машине, строго из списка или пустая строка): ' + BRANDS.map(b => b.n).join(', ') + '. Если машина — электромобиль или гибрид (например BYD, Tesla, Zeekr), выбери вид работ «' + EV + '».\n\n' +
-    (aiLangHint() || 'Отвечай на языке клиента (русский или узбекский).') + ' Ответь ТОЛЬКО JSON без пояснений:\n' +
+    (aiLangHint() || 'Отвечай на языке клиента (русский или таджикский).') + ' Ответь ТОЛЬКО JSON без пояснений:\n' +
     '{"cat":"","brand":"","problem":"что, скорее всего, случилось, 1–2 предложения","urgency":"Срочно|Сегодня|На этой неделе|Не спешу","title":"заголовок заказа до 70 знаков","description":"описание задачи для мастера, 2–4 предложения","safety":"что сделать прямо сейчас для безопасности, или пустая строка","questions":["что мастер, скорее всего, уточнит"]}\n\n' +
     'Описание клиента: """' + (text || '(только фото)') + '"""';
 }
@@ -4065,22 +4068,26 @@ function aiFallbackHTML(txt) {
 
 /* ---------- ИИ: перевод в чате, анкета мастера, сводка отзывов ---------- */
 const TR = {};
-const isUzText = t => /[ўқғҳ]|o['‘’ʻ]|g['‘’ʻ]|\b(va|uchun|bilan|qachon|kerak|bormi|yoq|yo'q|rahmat|assalomu|salom|ertaga|bugun|narxi|qancha)\b/i.test(t);
+/* Таджикский текст: буквы ӣ ӯ қ ғ ҳ ҷ или частые таджикские слова
+   (\b в JS не понимает кириллицу, поэтому границы слов заданы вручную) */
+const isTgText = t => /[ӣӯқғҳҷ]/i.test(t) ||
+  (/(^|[^а-яёӣӯқғҳҷ])(ва|барои|бо|ман|шумо|мекунам|мешавад|ҳаст|нест|лутфан|ташаккур|салом|имруз|пагох|чанд|нарх|хуб|бале)(?=$|[^а-яёӣӯқғҳҷ])/i.test(t) && !/[ыщц]/i.test(t));
+const TR_LANG = {ru: ['на русский язык', 'Русский'], tg: ['на таджикский язык (кириллица)', 'Тоҷикӣ'], en: ['на английский язык', 'English']};
 async function translateMsg(id) {
   const x = messagesAll().find(y => y.id === id); if (!x) return;
-  const toUz = !isUzText(x.text);
+  // Куда переводить: сайт на английском → на английский; таджикское сообщение → на русский; остальное → на таджикский
+  const to = LANG.cur === 'en' ? 'en' : isTgText(x.text) ? 'ru' : 'tg';
   TR[id] = {loading: true}; refreshChat();
   try {
-    const target = LANG.cur === 'en' ? 'на английский язык' : LANG.cur === 'tg' ? 'на таджикский язык (кириллица)' : toUz ? 'на узбекский язык (латиница)' : 'на русский язык';
-    const r = await aiAsk('translate', 'Переведи сообщение из чата клиента и мастера ' + target + '. Сохрани смысл, время, цены и имена. Ответь ТОЛЬКО JSON: {"text":"перевод"}\n\nСообщение: """' + x.text + '"""');
-    TR[id] = {text: String(r.text || '').slice(0, 1200), to: LANG.cur === 'ru' && toUz ? 'uz' : LANG.cur};
+    const r = await aiAsk('translate', 'Переведи сообщение из чата клиента и мастера ' + TR_LANG[to][0] + '. Сохрани смысл, время, цены и имена. Ответь ТОЛЬКО JSON: {"text":"перевод"}\n\nСообщение: """' + x.text + '"""');
+    TR[id] = {text: String(r.text || '').slice(0, 1200), to};
   } catch (e) { TR[id] = {err: aiErrText(e)}; }
   refreshChat();
 }
 function trHTML(x) {
   const t = TR[x.id];
   if (t && t.loading) return '<span class="tr">Перевожу…</span>';
-  if (t && t.text) return '<span class="tr"><em>' + (t.to === 'uz' ? 'O‘zbekcha' : 'Перевод') + ':</em> ' + esc(t.text) + '</span>';
+  if (t && t.text) return '<span class="tr"><em>' + esc((TR_LANG[t.to] || TR_LANG.ru)[1]) + ':</em> ' + esc(t.text) + '</span>';
   if (t && t.err) return '<span class="tr">' + esc(t.err) + '</span>';
   return aiOn() ? '<button class="msg-tr" type="button" data-tr="' + esc(x.id) + '">' + icon('spark') + 'Перевести</button>' : '';
 }
@@ -4748,11 +4755,90 @@ function setView(id, push) {
   if (id === 'catalog' && F.view === 'map' && MAPV.map) setTimeout(() => MAPV.map.invalidateSize(), 60);
   $$('.nav a[data-nav]').forEach(a => a.setAttribute('aria-current', a.dataset.nav === id ? 'true' : 'false'));
   $$('#tabbar [data-tab]').forEach(b => b.setAttribute('aria-current', b.dataset.tab === id ? 'true' : 'false'));
+  moveLens(changed);
   if (changed) {
     window.scrollTo(0, 0);
     const url = location.pathname + location.search + (id === 'catalog' ? '' : '#' + id);
     try { if (push) history.pushState({view: id}, '', url); else history.replaceState({view: id}, '', url); } catch (e) { /* без истории */ }
   }
+}
+/* Стеклянная «линза» в нижнем меню, как в iOS 26: перетекает к выбранному разделу */
+function moveLens(animate) {
+  const lens = $('#tab-lens'), bar = $('#tabbar'); if (!lens || !bar) return;
+  const b = bar.querySelector('[data-tab][aria-current="true"]');
+  if (!b || bar.offsetWidth === 0) { lens.classList.remove('on'); return; }
+  if (b.classList.contains('tab-ai')) lensBig(lens, bar, b);
+  else {
+    lensSmall(lens);
+    lens.style.width = (b.offsetWidth - 6) + 'px';
+    lens.style.translate = (b.offsetLeft + 3) + 'px 0';
+  }
+  if (animate && lens.classList.contains('on')) { lens.classList.remove('moving'); void lens.offsetWidth; lens.classList.add('moving'); }
+  lens.classList.add('on');
+}
+addEventListener('resize', () => moveLens(false));
+/* У круглой кнопки ИИ в центре капля не пропадает, а раздувается в круг вокруг неё */
+function lensBig(lens, bar, b) {
+  // Считаем по раскладке (offset*), а не по экрану: так нажатие (кнопка в этот миг чуть сжата) не сдвигает круг.
+  // Сдвиг задаём через translate, а не transform: тогда «пружина» (scale) не растягивает сдвиг и капля не уезжает вбок
+  const orb = b.querySelector('.tab-ai-in') || b;
+  let x = orb.offsetWidth / 2, y = orb.offsetHeight / 2;
+  for (let e = orb; e && e !== bar; e = e.offsetParent) { x += e.offsetLeft; y += e.offsetTop; }
+  const size = Math.round(orb.offsetWidth + 22);
+  lens.classList.add('big');
+  lens.style.width = size + 'px'; lens.style.height = size + 'px';
+  lens.style.top = Math.round(y - size / 2) + 'px';
+  lens.style.translate = Math.round(x - size / 2) + 'px 0';
+}
+function lensSmall(lens) {
+  if (!lens.classList.contains('big')) return;
+  lens.classList.remove('big'); lens.style.height = ''; lens.style.top = '';
+}
+function openTab(tab) {
+  if (tab === 'chat') { $('#btn-chat').click(); moveLens(true); return; }
+  if (tab === 'me') { $('#btn-cab').click(); moveLens(true); return; }
+  goTo(tab);
+}
+/* Линзу можно зажать и водить пальцем по меню: она едет за пальцем и увеличивает значок под собой,
+   а когда палец отпускают — открывается раздел под линзой (как в iOS 26) */
+const LENS = {dragged: false};
+function initLensDrag() {
+  const bar = $('#tabbar'), lens = $('#tab-lens'); if (!bar || !lens) return;
+  const btns = () => $$('[data-tab]', bar);
+  const under = x => { let best = null, bd = 1e9; btns().forEach(b => { const r = b.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - x); if (d < bd) { bd = d; best = b; } }); return best; };
+  const place = x => {
+    const b = under(x); btns().forEach(e => e.classList.toggle('under-lens', e === b));
+    if (b && b.classList.contains('tab-ai')) { lensBig(lens, bar, b); return; }
+    lensSmall(lens);
+    const br = bar.getBoundingClientRect(), w = btns()[0].offsetWidth - 6;
+    lens.style.width = w + 'px';
+    lens.style.translate = Math.max(3, Math.min(br.width - w - 3, x - br.left - w / 2)) + 'px 0';
+  };
+  let drag = null;
+  bar.addEventListener('pointerdown', e => { if (e.button > 0) return; drag = {id: e.pointerId, x0: e.clientX, moved: false}; });
+  bar.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    if (!drag.moved) {
+      if (Math.abs(e.clientX - drag.x0) < 8) return;
+      drag.moved = true;
+      try { bar.setPointerCapture(e.pointerId); } catch (err) { /* не важно */ }
+      lens.style.width = (btns()[0].offsetWidth - 6) + 'px';
+      lens.classList.add('on', 'drag');
+    }
+    place(e.clientX);
+  });
+  const end = (e, pick) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const d = drag; drag = null;
+    if (!d.moved) return;
+    lens.classList.remove('drag');
+    btns().forEach(b => b.classList.remove('under-lens'));
+    LENS.dragged = true; setTimeout(() => { LENS.dragged = false; }, 80);
+    const b = pick ? under(e.clientX) : null;
+    if (b) openTab(b.dataset.tab); else moveLens(true);
+  };
+  bar.addEventListener('pointerup', e => end(e, true));
+  bar.addEventListener('pointercancel', e => end(e, false));
 }
 function goTo(id) {
   closeMenu();
@@ -4957,12 +5043,10 @@ function init() {
   $('#btn-search').addEventListener('click', openSearch);
   $('#btn-gear').addEventListener('click', openSettings);
   $('#tabbar').addEventListener('click', e => {
-    const b = e.target.closest('[data-tab]'); if (!b) return;
-    const tab = b.dataset.tab;
-    if (tab === 'chat') { $('#btn-chat').click(); return; }
-    if (tab === 'me') { $('#btn-cab').click(); return; }
-    goTo(tab);
+    if (LENS.dragged) return;
+    const b = e.target.closest('[data-tab]'); if (b) openTab(b.dataset.tab);
   });
+  initLensDrag();
   addEventListener('popstate', () => { if (!Modal.root.hidden) Modal.close(true); setView((location.hash || '').slice(1), false); });
   setView((location.hash || '').slice(1), false);
   $('#btn-chat').addEventListener('click', () => requireAccount('Чтобы переписываться с мастерами, создайте аккаунт: имя и номер телефона.', () => openChat()));

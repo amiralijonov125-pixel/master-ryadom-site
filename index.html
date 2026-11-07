@@ -8,7 +8,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Мастер рядом</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#F1EEFA">
+<meta name="theme-color" content="#2E2621">
 <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -937,7 +937,7 @@ html[data-theme="neon"] .mr-pin.jpin b{color:#2A1600}
 
 .card .km{color:var(--accent);font-weight:600}
 @media (max-width:860px){.map{height:calc(100dvh - 430px)}.view-sw button{padding:0 10px}}
-.theme-pick{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.theme-pick{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:360px}
 @media (max-width:520px){.theme-pick{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 #catalog .res-bar{margin-top:16px}
 .ac-cats{display:flex;flex-wrap:wrap;gap:6px;padding:2px 6px 8px}
@@ -999,7 +999,7 @@ html[data-theme="neon"] .mr-pin.jpin b{color:#2A1600}
 /* Телефоны и слабые устройства: без размытия и бесконечных анимаций, чтобы прокрутка была плавной */
 html{-webkit-tap-highlight-color:transparent}
 a,button,label,input,select,textarea,[role=button]{touch-action:manipulation}
-html.lite *,html.lite *::before,html.lite *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.lite *:not(.tabbar):not(.tab-lens):not(.tab-ai-in):not(.icon-btn):not(.hdr),html.lite *::before,html.lite *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 html.lite .modal-ov{background:rgba(0,0,0,.55)}
 html.lite .bdg.live::before,html.lite .skip .ic,html.lite .slide.is-active .float-card{animation-iteration-count:1}
 html.lite .card,html.lite .job{box-shadow:none}
@@ -1057,6 +1057,125 @@ html.lite .card,html.lite .job{box-shadow:none}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0ms!important;transition-duration:.01ms!important}
   .marquee{animation:none}
 }
+
+/* ---------- «Жидкое стекло» как в iOS 26 ----------
+   Прозрачные кнопки с бликом по краю: сквозь них видно то, что под ними (и логотип на фоне).
+   Настоящее размытие (backdrop-filter) — только у закреплённых элементов: шапка, нижнее меню, круглые кнопки.
+   Так эффект не тормозит прокрутку на слабых телефонах. */
+:root{--lg-bg:rgba(255,255,255,.38);--lg-tint:rgba(255,255,255,.55);--lg-line:rgba(255,255,255,.75);--lg-edge:rgba(40,25,110,.12);--lg-hi:rgba(255,255,255,.95);--lg-shadow:0 10px 28px -10px rgba(45,30,110,.30);--lg-blur:blur(16px) saturate(190%);--spring:cubic-bezier(.34,1.56,.64,1)}
+:root[data-theme="neon"],:root[data-theme="black"]{--lg-bg:rgba(255,255,255,.07);--lg-tint:rgba(255,255,255,.12);--lg-line:rgba(255,255,255,.20);--lg-edge:rgba(0,0,0,.40);--lg-hi:rgba(255,255,255,.32);--lg-shadow:0 10px 28px -10px rgba(0,0,0,.65)}
+.icon-btn,.tabbar,.tab-lens,.view-sw,.btn-ghost,.chip,.ac-cat,.hdr.is-solid,html[data-theme] .icon-btn,html[data-theme] .tabbar,html[data-theme] .hdr.is-solid,html[data-theme] .btn-ghost,html[data-theme] .chip:not([aria-pressed="true"]),html[data-theme] .view-sw{
+  background:linear-gradient(180deg,var(--lg-tint) 0%,rgba(255,255,255,0) 55%),var(--lg-bg);
+  border-color:var(--lg-line);
+  box-shadow:inset 0 1px 0 var(--lg-hi),inset 0 -1px 1px var(--lg-edge),var(--lg-shadow)}
+.icon-btn,.tabbar,.tab-lens,.hdr.is-solid,html[data-theme] .icon-btn,html[data-theme] .tabbar,html[data-theme] .hdr.is-solid{-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
+html[data-theme] .icon-btn{border-radius:50%}
+.hdr.is-solid{border-bottom-color:transparent}
+/* Пружинящие нажатия */
+.btn,.icon-btn,.chip,.ac-cat,.ac-it,.tabbar button,.ai-tile,.view-sw button,.fav,.cmp{transition:transform .5s var(--spring),background .25s,border-color .25s,box-shadow .25s,color .2s}
+.btn:active{transform:translate(var(--tx),var(--ty)) scale(.95)}
+.icon-btn:active,.chip:active,.ac-cat:active,.tabbar button:active,.view-sw button:active,.fav:active,.cmp:active{transform:scale(.9)}
+.ai-tile:active{transform:scale(.96)}
+/* Нижнее меню: плавающая стеклянная панель и «линза», которая перетекает к выбранному разделу */
+@media (max-width:860px){
+  .tabbar,html[data-theme] .tabbar{left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));padding:6px;border:1px solid var(--lg-line);border-radius:30px}
+  .tabbar button{position:relative;z-index:1;min-height:54px;border-radius:24px}
+  .tabbar button .ic{transition:transform .55s var(--spring)}
+  .tabbar button[aria-current="true"]:not(.tab-ai) .ic{transform:scale(1.18) translateY(-1px)}
+  .tab-lens{position:absolute;z-index:0;left:0;top:6px;height:calc(100% - 12px);width:60px;border-radius:24px;border:1px solid var(--lg-line);pointer-events:none;opacity:0;
+    transition:translate .6s var(--spring),width .6s var(--spring),opacity .25s}
+  .tab-lens.on{opacity:1}
+  .tab-lens.moving{animation:lensSquash .6s ease}
+  .tab-ai-in,html[data-theme] .tab-ai-in{margin-top:-26px;border:1px solid var(--lg-line);
+    background:linear-gradient(180deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,0) 50%),color-mix(in srgb,var(--accent) 82%,transparent);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 10px 24px -6px color-mix(in srgb,var(--accent) 60%,transparent);-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
+  html[data-theme="neon"] .tab-ai-in{background:linear-gradient(180deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,0) 50%),linear-gradient(135deg,rgba(224,70,111,.85),rgba(242,140,40,.85));color:#fff}
+  .page main>section.sec{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}
+  .toasts{bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
+}
+@media (max-width:860px){
+  .tabbar,html[data-theme] .tabbar{touch-action:none;-webkit-user-select:none;user-select:none}
+  .tab-lens.drag{transition:width .3s var(--spring),opacity .2s,scale .35s var(--spring);scale:1.1 1.16;box-shadow:inset 0 1px 0 var(--lg-hi),inset 0 -1px 1px var(--lg-edge),0 14px 30px -8px rgba(40,25,110,.35)}
+  .tabbar button.under-lens .ic{transform:scale(1.32) translateY(-3px)}
+  .tabbar button.under-lens{color:var(--accent)}
+}
+@media (max-width:860px){
+  .tab-lens{transition:translate .6s var(--spring),width .6s var(--spring),height .6s var(--spring),top .6s var(--spring),border-radius .45s ease,opacity .25s}
+  .tab-lens.big{border-radius:50%}
+  .tab-lens.drag.big{scale:1.08;transition:translate .35s var(--spring),width .35s var(--spring),height .35s var(--spring),top .35s var(--spring),border-radius .3s ease,scale .35s var(--spring)}
+  .tabbar button.tab-ai[aria-current="true"] .tab-ai-in,.tabbar button.tab-ai.under-lens .tab-ai-in{transform:scale(1.08)}
+  .tab-ai-in{transition:transform .55s var(--spring)}
+}
+@keyframes lensSquash{0%{scale:1 1}35%{scale:1.22 .86}70%{scale:.96 1.04}100%{scale:1 1}}
+/* Логотип на фоне: сквозь стекло его видно, когда содержимое прокручивается */
+.bg-fallback::before{content:"";position:absolute;left:50%;top:46%;width:min(72vw,440px);aspect-ratio:1;transform:translate(-50%,-50%);opacity:.16;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect x='1' y='1' width='13' height='13' rx='4' fill='%23E0466F'/%3E%3Crect x='16' y='1' width='13' height='13' rx='4' fill='%238F80E0'/%3E%3Crect x='1' y='16' width='13' height='13' rx='4' fill='%236E60C2'/%3E%3Crect x='16' y='16' width='13' height='13' rx='4' fill='%23F28C28'/%3E%3C/svg%3E") center/contain no-repeat}
+html[data-theme="neon"] .bg-fallback::before,html[data-theme="black"] .bg-fallback::before{opacity:.12}
+/* Кто попросил в системе меньше прозрачности — получает обычные непрозрачные кнопки */
+@media (prefers-reduced-transparency:reduce){
+  .icon-btn,.tabbar,.tab-lens,.view-sw,.btn-ghost,.chip,.hdr.is-solid,.tab-ai-in,html[data-theme] .icon-btn,html[data-theme] .tabbar,html[data-theme] .hdr.is-solid,html[data-theme] .tab-ai-in{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+
+/* ---------- Тема «Стекло» (как стеклянный дашборд): матовые карточки поверх тёплого размытого фото ----------
+   Фон уже размыт заранее (bg/glass.jpg), поэтому карточкам не нужен дорогой backdrop-filter — на телефоне не тормозит. */
+:root[data-theme="glass"]{--bg:#2E2621; --surface:rgba(255,255,255,.10); --surface-2:rgba(255,255,255,.07); --panel:rgba(255,255,255,.10);
+  --glass:rgba(255,255,255,.10); --glass-line:rgba(255,255,255,.18); --overlay:rgba(12,9,7,.55); --float:rgba(46,38,33,.94);
+  --ink:#FFFFFF; --ink-2:rgba(255,255,255,.84); --muted:rgba(255,255,255,.62); --line:rgba(255,255,255,.16); --line-2:rgba(255,255,255,.28);
+  --accent:#C9BBFF; --accent-ink:#1E1440; --accent-soft:rgba(201,187,255,.2); --brass:#FFB46B; --brass-ink:#2A1600; --brass-soft:rgba(255,180,107,.18); --star:#FFC857;
+  --ok:#8EF0BF; --ok-soft:rgba(110,231,168,.18); --hot:#FF9C9C; --hot-soft:rgba(255,120,120,.18);
+  --deep:#2E2621; --deep-2:#3A3029; --deep-ink:#FFFFFF; --deep-muted:rgba(255,255,255,.62); --deep-line:rgba(255,255,255,.12); --deep-accent:#FFB46B;
+  --scrim:rgba(46,38,33,.9); --scrim-2:rgba(46,38,33,.5); --glare:rgba(255,255,255,.12); --glaze-hi:rgba(255,255,255,.18); --glaze-sheen:rgba(255,255,255,.10);
+  --shadow-1:0 1px 1px rgba(0,0,0,.12),0 14px 30px -18px rgba(0,0,0,.55); --shadow-2:0 2px 6px rgba(0,0,0,.2),0 30px 60px -24px rgba(0,0,0,.7);
+  --tile:#3A3029; --tile-var:#4A3D33; --grout:#1E1916; --glaze-1:#8A7AD6; --glaze-2:#D98B5F; --glaze-3:#5F8FB8;
+  --lg-bg:rgba(255,255,255,.10); --lg-tint:rgba(255,255,255,.14); --lg-line:rgba(255,255,255,.24); --lg-edge:rgba(0,0,0,.25); --lg-hi:rgba(255,255,255,.35); --lg-shadow:0 12px 30px -12px rgba(0,0,0,.6);
+  color-scheme:dark}
+html[data-theme="glass"] body{background:var(--bg)}
+html[data-theme="glass"] .bg-fallback{display:block;opacity:1;background:linear-gradient(160deg,rgba(98,70,201,.20),rgba(20,15,12,.10) 45%,rgba(20,15,12,.45)),url("bg/glass.jpg") center/cover no-repeat}
+html[data-theme="glass"] .bg-fallback::before,html[data-theme="glass"] .bg-fallback::after{display:none}
+html[data-theme="glass"] #bg3d{display:none}
+html[data-theme="glass"] .card,html[data-theme="glass"] .job,html[data-theme="glass"] .ai-tile,html[data-theme="glass"] .wz,html[data-theme="glass"] .perk,
+html[data-theme="glass"] .rv-form,html[data-theme="glass"] .score,html[data-theme="glass"] .contact,html[data-theme="glass"] .filters,html[data-theme="glass"] .search,html[data-theme="glass"] .book{
+  background:linear-gradient(160deg,rgba(255,255,255,.17) 0%,rgba(255,255,255,.06) 100%);border:1px solid rgba(255,255,255,.18);border-radius:24px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 20px 40px -26px rgba(0,0,0,.65)}
+html[data-theme="glass"]:not(.lite) .card,html[data-theme="glass"]:not(.lite) .job,html[data-theme="glass"]:not(.lite) .ai-tile{-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
+html[data-theme="glass"] .search{border-radius:999px}
+html[data-theme="glass"] .inp,html[data-theme="glass"] .sel{background:rgba(0,0,0,.20);border-color:rgba(255,255,255,.20);color:#fff}
+html[data-theme="glass"] .inp::placeholder{color:rgba(255,255,255,.5)}
+html[data-theme="glass"] .btn{border-radius:999px;background:rgba(255,255,255,.92);color:#1E1916;box-shadow:0 10px 24px -14px rgba(0,0,0,.7)}
+html[data-theme="glass"] .btn-brass{background:linear-gradient(135deg,#FFC58A,#FFA35A);color:#2A1600}
+html[data-theme="glass"] .btn.btn-ghost{background:linear-gradient(180deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.06) 100%);color:#fff;border:1px solid rgba(255,255,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 24px -16px rgba(0,0,0,.7)}
+html[data-theme="glass"] .chip[aria-pressed="true"],html[data-theme="glass"] .view-sw button[aria-pressed="true"],html[data-theme="glass"] .cat[aria-pressed="true"]{background:rgba(255,255,255,.92);color:#1E1916;border-color:transparent}
+html[data-theme="glass"] .view-sw button[aria-pressed="true"] .ic,html[data-theme="glass"] .cat[aria-pressed="true"] .ic{color:#1E1916}
+html[data-theme="glass"] .ava{border-radius:50%}
+html[data-theme="glass"] .sec-h,html[data-theme="glass"] .res-count,html[data-theme="glass"] .brand{text-shadow:0 2px 14px rgba(0,0,0,.35)}
+html[data-theme="glass"] .modal,html[data-theme="glass"] .ac,html[data-theme="glass"] .leaflet-popup-content-wrapper,html[data-theme="glass"] .leaflet-popup-tip,html[data-theme="glass"] .leaflet-control-layers{background:var(--float)!important;border-color:rgba(255,255,255,.16)}
+html[data-theme="glass"]:not(.lite) .modal{background:rgba(46,38,33,.8)!important;-webkit-backdrop-filter:blur(24px) saturate(140%);backdrop-filter:blur(24px) saturate(140%)}
+html[data-theme="glass"] .toast{background:rgba(255,255,255,.94);color:#1E1916}
+html[data-theme="glass"] .tab-ai-in{background:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,0) 55%),rgba(255,255,255,.22)!important;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 12px 26px -8px rgba(0,0,0,.6)!important}
+html[data-theme="glass"] .tabbar button[aria-current="true"],html[data-theme="glass"] .tabbar button.under-lens{color:#fff}
+html[data-theme="glass"] .ai-orb{background:linear-gradient(135deg,rgba(255,255,255,.35),rgba(255,255,255,.08));border:1px solid rgba(255,255,255,.3)}
+html[data-theme="glass"] .mr-pin{background:rgba(255,255,255,.92)}
+html[data-theme="glass"] .mr-pin b{color:#1E1916}
+html[data-theme="glass"] .tiles-street{filter:brightness(.8) saturate(.85)}
+html[data-theme="glass"] .leaflet-control-attribution{background:rgba(30,25,22,.7);color:rgba(255,255,255,.7)}
+
+/* ---------- Лаванда в том же стиле, что «Стекло»: светлые матовые карточки поверх мягкого сиреневого фона ----------
+   Фон — только CSS-градиенты (без картинки и без размытия), поэтому на телефоне не тормозит. */
+html[data-theme="lavender"] .bg-fallback{display:block;opacity:1;background:
+  radial-gradient(60% 45% at 12% 8%,rgba(167,139,250,.55),transparent 70%),
+  radial-gradient(55% 40% at 92% 22%,rgba(244,170,200,.45),transparent 70%),
+  radial-gradient(70% 50% at 70% 95%,rgba(255,196,150,.40),transparent 70%),
+  radial-gradient(60% 50% at 5% 80%,rgba(140,170,255,.35),transparent 70%),#EEE9FB}
+html[data-theme="lavender"] .bg-fallback::after{display:none}
+html[data-theme="lavender"] #bg3d{display:none}
+html[data-theme="lavender"] .card,html[data-theme="lavender"] .job,html[data-theme="lavender"] .ai-tile,html[data-theme="lavender"] .wz,html[data-theme="lavender"] .perk,
+html[data-theme="lavender"] .rv-form,html[data-theme="lavender"] .score,html[data-theme="lavender"] .contact,html[data-theme="lavender"] .filters,html[data-theme="lavender"] .search,html[data-theme="lavender"] .book{
+  background:linear-gradient(160deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.52) 100%);border:1px solid rgba(255,255,255,.9);border-radius:24px;
+  box-shadow:inset 0 1px 0 #fff,0 20px 40px -28px rgba(60,40,140,.45)}
+html[data-theme="lavender"]:not(.lite) .card,html[data-theme="lavender"]:not(.lite) .job,html[data-theme="lavender"]:not(.lite) .ai-tile{-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
+html[data-theme="lavender"] .search{border-radius:999px}
+html[data-theme="lavender"] .btn{border-radius:999px}
+html[data-theme="lavender"] .ava{border-radius:50%}
 </style>
 </head>
 <body>
@@ -1493,6 +1612,7 @@ html.lite .card,html.lite .job{box-shadow:none}
   <button class="icon-btn" type="button" id="tray-clear" aria-label="Очистить сравнение"><span data-icon="close"></span></button>
 </div>
 <nav class="tabbar" id="tabbar" aria-label="Разделы">
+  <span class="tab-lens" id="tab-lens" aria-hidden="true"></span>
   <button type="button" data-tab="catalog"><span data-icon="tiles"></span><span>Мастера</span></button>
   <button type="button" data-tab="jobs"><span data-icon="briefcase"></span><span>Заказы</span></button>
   <button type="button" data-tab="ai" class="tab-ai" aria-label="ИИ-помощник"><span class="tab-ai-in"><span data-icon="spark"></span></span><span>ИИ</span></button>
